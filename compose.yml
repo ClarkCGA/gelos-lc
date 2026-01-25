@@ -1,0 +1,38 @@
+services:
+  notebook:
+    image: gelos:latest
+    build: .
+    environment:
+      - PYTHONPATH=/app
+      - NB_UID=${UID:-1000}
+      - NB_GID=${GID:-100}
+      - GRANT_SUDO=yes
+    user: root 
+    volumes:
+       - .:/app/ 
+       - "${RAW_PATH}:/app/data/raw/"
+       - "${PROCESSED_PATH}:/app/data/processed/"
+       - "${EXTERNAL_PATH}:/app/data/external/"
+       - "${INTERIM_PATH}:/app/data/interim/"
+       - "${GELOS_MODULE_PATH}:/app/gelos/"
+    command: bash -lc "jupyter lab --ip=0.0.0.0 ${JUPYTERLAB_ARGS:-}"
+    ports:
+       - "${JUPYTER_HOST_PORT}:8888"
+    shm_size: 32gb
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  test:
+    image: gelos-test:latest
+    build: 
+      context: .
+      target: test
+    volumes:
+      - .:/app/
+      - "${GELOS_MODULE_PATH}:/app/gelos/"
+    command: make test
