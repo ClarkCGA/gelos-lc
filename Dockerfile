@@ -16,7 +16,6 @@ RUN git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe && \
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# COPY . /app/
 COPY pyproject.toml /app/
 WORKDIR /app
 
@@ -24,12 +23,13 @@ RUN uv venv /opt/venv --python /opt/conda/bin/python && \
     uv pip install --python /opt/venv/bin/python -r pyproject.toml
 ENV PATH="/opt/venv/bin:$PATH"
 
+# test environment
 FROM base AS test
-
 RUN uv pip install --python /opt/venv/bin/python -r pyproject.toml --extra test
 
 # slim image for production
 FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime AS production
+
 # requirements for tippecanoe
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libsqlite3-dev zlib1g-dev && rm -rf /var/lib/apt/lists/*
