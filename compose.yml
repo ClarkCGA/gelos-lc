@@ -1,7 +1,9 @@
 services:
   notebook:
-    image: gelos:latest
-    build: .
+    image: gelos-base:latest
+    build:
+      context: .
+      target: base
     environment:
       - PYTHONPATH=/app
       - NB_UID=${UID:-1000}
