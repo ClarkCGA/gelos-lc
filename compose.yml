@@ -1,26 +1,28 @@
 services:
-  notebook:
-    image: gelos-base:latest
+  dev:
     build:
       context: .
-      target: base
+      dockerfile: Dockerfile
+      target: dev
+    image: gelos-lc-dev
+    user: "${UID:-1000}:${GID:-100}"
+    group_add:
+      - users
     environment:
-      - PYTHONPATH=/app
-      - NB_UID=${UID:-1000}
-      - NB_GID=${GID:-100}
-      - GRANT_SUDO=yes
-    user: root 
+      PYTHONPATH: /app
+    working_dir: /app
+    ports:
+      - "${JUPYTER_HOST_PORT:-8888}:8888"
+      - "${DASK_HOST_PORT:-8787}:8787"
     volumes:
-       - .:/app/ 
+       - ./:/app/ 
        - "${RAW_PATH}:/app/data/raw/"
        - "${PROCESSED_PATH}:/app/data/processed/"
        - "${EXTERNAL_PATH}:/app/data/external/"
        - "${INTERIM_PATH}:/app/data/interim/"
        - "${GELOS_MODULE_PATH}:/app/gelos/"
-    command: bash -lc "jupyter lab --ip=0.0.0.0 ${JUPYTERLAB_ARGS:-}"
-    ports:
-       - "${JUPYTER_HOST_PORT}:8888"
-    shm_size: 32gb
+    shm_size: '32gb'
+    command: "pixi run start-notebook.py ${JUPYTERLAB_ARGS}"
     deploy:
       resources:
         reservations:
@@ -28,13 +30,28 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-
   test:
-    image: gelos-test:latest
-    build: 
+    build:
       context: .
+      dockerfile: Dockerfile
       target: test
+    image: gelos-lc-test
+    environment:
+      PYTHONPATH: /app
+    working_dir: /app
     volumes:
-      - .:/app/
-      - "${GELOS_MODULE_PATH}:/app/gelos/"
-    command: make test
+      - ./:/app/ 
+      - "${GELOS_MODULE_PATH}:/app/gelos/" # until gelos is public, then change Dockerfile
+  prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+    image: gelos-lc-prod
+    environment:
+      PYTHONPATH: /app
+    working_dir: /app
+    volumes:
+      - ./:/app/ 
+      - "${GELOS_MODULE_PATH}:/app/gelos/" # until gelos is public, then change Dockerfile
+ 

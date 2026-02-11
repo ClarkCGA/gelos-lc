@@ -3,11 +3,11 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "gelos"
+name = "src"
 version = "0.0.1"
-description = "Repository for Geospatial Exploration of Latent Observation Space (GELOS)"
+description = "Implementation of Geospatial Exploration of Latent Embedding Space for Land Cover Dataset"
 authors = [
-  { name = "Denys Godwin" },
+  { name = "CGA" },
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
@@ -17,43 +17,58 @@ classifiers = [
 ]
 requires-python = "~=3.11.0"
 
-dependencies = [
-    "pip",
-    "terratorch>=1.1.1",
-    "pyarrow",
-    "typer",
-    "loguru",
-    "tqdm",
-    "numpy",
-    "pandas",
-    "matplotlib",
-    "rioxarray",
-    "scikit-learn",
-    "rasterio",
-    "shapely",
-    "geopandas",
-    "pillow",
-    "jupyterlab",
-    "python-dotenv",
-    "mkdocs",
-    "timm",
-    "einops",
-]
 
-[project.optional-dependencies]
-test = [
-    "pytest",
-    "ruff"
-]
 [tool.ruff]
 line-length = 99
-src = ["gelos"]
-include = ["pyproject.toml", "gelos/**/*.py"]
+src = ["src"]
+include = ["pyproject.toml", "src/**/*.py"]
 
 [tool.ruff.lint]
 extend-select = ["I"]  # Add import sorting
 
 [tool.ruff.lint.isort]
-known-first-party = ["gelos"]
+known-first-party = ["src"]
 force-sort-within-sections = true
 
+
+[tool.pixi.workspace]
+name = "gelos-lc"
+description = "Implementation of Geospatial Exploration of Latent Embedding Space for Land Cover Dataset"
+version = "0.1.0"
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.dependencies]
+python = "~=3.11.0"
+pytest = "*"
+ruff = "*"
+pip = "*"
+terratorch = "1.1.1"
+pyarrow = "*"
+typer = "*"
+tqdm = "*"
+numpy = "*"
+pandas = "*"
+matplotlib = "*"
+rioxarray = "*"
+scikit-learn = "*"
+geopandas = "*"
+pillow = "*"
+jupyterlab = "*"
+python-dotenv = "*"
+mkdocs = "*"
+timm = "*"
+einops = "*"
+
+[tool.pixi.pypi-dependencies]
+awscli = "*"
+mkdocs = "*"
+python-dotenv = "*"
+
+[tool.pixi.pypi-dependencies.src]
+path = "."
+editable = true
+
+[tool.pixi.pypi-dependencies.gelos]
+path = "./gelos"
+editable = true

@@ -1,4 +1,5 @@
 FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime AS base
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     make \
     curl \
@@ -14,28 +15,46 @@ RUN git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe && \
     make -C /tmp/tippecanoe install && \
     rm -rf /tmp/tippecanoe
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+RUN curl -fsSL https://pixi.sh/install.sh | sh
+ENV PATH="/root/.pixi/bin:${PATH}"
 
-COPY pyproject.toml /app/
 WORKDIR /app
+ENV PYTHONPATH=/app
 
-RUN uv venv /opt/venv --python /opt/conda/bin/python && \
-    uv pip install --python /opt/venv/bin/python -r pyproject.toml
-ENV PATH="/opt/venv/bin:$PATH"
+# COPY pyproject.toml README.md Makefile LICENSE /app/
+# COPY src/ /app/src/
+# RUN pixi install
 
-# test environment
 FROM base AS test
-RUN uv pip install --python /opt/venv/bin/python -r pyproject.toml --extra test
 
-# slim image for production
-FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime AS production
+# COPY tests/ /app/tests/
 
-# requirements for tippecanoe
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libsqlite3-dev zlib1g-dev && rm -rf /var/lib/apt/lists/*
+CMD ["pixi", "run", "make", "test"]
 
-COPY --from=base /usr/local/bin/tippecanoe* /usr/local/bin/
-COPY --from=base /opt/venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+FROM base AS prod
+
+CMD ["pixi", "run", "make", "-h"]
+
+FROM quay.io/jupyter/pytorch-notebook:cuda12-python-3.13 AS dev
+
+ENV NB_UID=1000 \
+    NB_GID=100 \
+    NB_USER=jovyan \
+    CHOWN_HOME=yes \
+    CHOWN_HOME_OPTS=-R
+
+USER root
+
+RUN apt-get update \
+    && apt-get install -y \
+    curl \
+    make \
+    && rm -rf /var/lib/apt/lists/*
+
+USER ${NB_USER}
+RUN curl -fsSL https://pixi.sh/install.sh | sh
+ENV PATH="/home/${NB_USER}/.pixi/bin:/app/.pixi/envs/default/bin:${PATH}"
+
 WORKDIR /app
-COPY gelos/ ./gelos
+
+CMD ["pixi", "run", "start-notebook.py"]

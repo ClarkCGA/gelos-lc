@@ -39,22 +39,13 @@ Repository for Geospatial Exploration of Latent Observation Space (GELOS)
 │
 ├── setup.cfg          <- Configuration file for flake8
 │
-└── gelos   <- Source code for use in this project.
+└── src   <- Source code for use in this project.
     │
-    ├── __init__.py             <- Makes gelos a Python module
+    ├── __init__.py             <- Makes this directory Python module
     │
-    ├── config.py               <- Store useful variables and configuration
+    ├── pmtiles_generation.py                <- Create PMTiles for Gelos App
     │
-    ├── dataset.py              <- Scripts to download or generate data
-    │
-    ├── features.py             <- Code to create features for modeling
-    │
-    ├── modeling                
-    │   ├── __init__.py 
-    │   ├── predict.py          <- Code to run model inference with trained models          
-    │   └── train.py            <- Code to train models
-    │
-    └── plots.py                <- Code to create visualizations
+    └── pmtiles_upload.py                <- Upload PMTiles for Gelos App
 ```
 
 --------
