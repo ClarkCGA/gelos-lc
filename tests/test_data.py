@@ -12,7 +12,7 @@ from pathlib import Path
 def dummy_gelos_data(tmp_path) -> str:
     base_dir = tmp_path / "gelos"
     base_dir.mkdir()
-    metadata_filename = "cleaned_df.geojson"
+    metadata_filename = "gelos_chip_tracker.geojson"
     metadata_path = base_dir / metadata_filename
     
     # Create a GeoDataFrame that matches the GeoJSON structure
@@ -49,12 +49,14 @@ def dummy_gelos_data(tmp_path) -> str:
 
 def test_gelos_datamodule(dummy_gelos_data):
     from gelos.gelosdatamodule import GELOSDataModule
+    from src.gelosdataset_lc import GELOSLCDataSet
     dummy_gelos_data = Path(dummy_gelos_data)
     batch_size = 1
     num_workers = 0
     # all bands
     datamodule = GELOSDataModule(
         data_root=dummy_gelos_data,
+        dataset_class=GELOSLCDataSet,
         batch_size=batch_size,
         num_workers=num_workers,
     )
@@ -63,5 +65,52 @@ def test_gelos_datamodule(dummy_gelos_data):
     batch = next(iter(predict_loader))
     assert "S1RTC" in batch['image'], "Key S1 not found on predict_dataloader"
     assert "S2L2A" in batch['image'], "Key S2 not found on predict_dataloader"
+    
+    gc.collect()
+
+def test_output_contract(dummy_gelos_data):
+    """Batch output must contain image, filename, and file_id keys."""
+    from gelos.gelosdatamodule import GELOSDataModule
+    from src.gelosdataset_lc import GELOSLCDataSet
+
+    dummy_gelos_data = Path(dummy_gelos_data)
+    datamodule = GELOSDataModule(
+        data_root=dummy_gelos_data,
+        dataset_class=GELOSLCDataSet,
+        batch_size=1,
+        num_workers=0,
+    )
+    datamodule.setup("predict")
+    batch = next(iter(datamodule.predict_dataloader()))
+
+    assert "image" in batch
+    assert "filename" in batch
+    assert "file_id" in batch
+    # image should be a dict of tensors for multi-sensor
+    assert isinstance(batch["image"], dict)
+    for sensor_tensor in batch["image"].values():
+        assert isinstance(sensor_tensor, torch.Tensor)
 
     gc.collect()
+
+
+def test_single_sensor(dummy_gelos_data):
+    """Single-sensor config should produce a plain Tensor for image."""
+    from gelos.gelosdatamodule import GELOSDataModule
+    from src.gelosdataset_lc import GELOSLCDataSet
+
+    dummy_gelos_data = Path(dummy_gelos_data)
+    datamodule = GELOSDataModule(
+        data_root=dummy_gelos_data,
+        dataset_class=GELOSLCDataSet,
+        batch_size=1,
+        num_workers=0,
+        bands={"S2L2A": GELOSLCDataSet.S2RTC_BAND_NAMES},
+    )
+    datamodule.setup("predict")
+    batch = next(iter(datamodule.predict_dataloader()))
+
+    assert isinstance(batch["image"], torch.Tensor)
+
+    gc.collect()
+

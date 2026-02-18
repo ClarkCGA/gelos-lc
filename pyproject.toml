@@ -59,6 +59,7 @@ python-dotenv = "*"
 mkdocs = "*"
 timm = "*"
 einops = "*"
+loguru = "*"
 
 [tool.pixi.pypi-dependencies]
 awscli = "*"

@@ -11,6 +11,7 @@ trainer:
 data:
   class_path: gelos.gelosdatamodule.GELOSDataModule
   init_args:
+    dataset_class: src.gelosdataset_lc.GELOSLCDataSet
     batch_size: 1
     num_workers: 0
     bands:
@@ -56,11 +57,11 @@ model:
 
 # define embedding extraction strategy names and lists of arguments for the embedding extraction function
 embedding_extraction_strategies:
-  CLS Token:
+  cls_token:
     - start: 0
       stop: 1
       step: 1
-  All Steps of Middle Patch:
+  all_steps_of_middle_patch:
  # as the first patch is the cls token, we index the middle as 19 rather than 18.
  # this is important for consistency with non-cls token models like terramind.
     - start: 15
@@ -68,7 +69,7 @@ embedding_extraction_strategies:
       # start and step are determined by the patch H and W dimensions determined by the model and the input sizes.
       # in this case, as our inputs are 96x96 and prithvi eo 300m uses 16x16 patches, we have 36 patches per time step.
       step: 36
-  All Patches from April to June:
+  all_patches_from_april_to_june:
     - start: 37
       stop: 73
       step: 1
