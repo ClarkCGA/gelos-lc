@@ -8,6 +8,7 @@ import pytest
 from torch.utils.data import DataLoader
 from utils import create_dummy_image
 from pathlib import Path
+import torch
 @pytest.fixture
 def dummy_gelos_data(tmp_path) -> str:
     base_dir = tmp_path / "gelos"
@@ -18,20 +19,24 @@ def dummy_gelos_data(tmp_path) -> str:
     # Create a GeoDataFrame that matches the GeoJSON structure
     data = {
         "id": [0],
-        "S2L2A_dates": ["20230218,20230419,20230713,20231230"],
-        "S1RTC_dates": ["20230218,20230419,20230712,20231227"],
-        "landsat_dates": ["20230217,20230524,20230921,20231218"],
-        "land_cover": [2],
+        "s2l2a_dates": ["20230218,20230419,20230713,20231230"],
+        "s1rtc_dates": ["20230218,20230419,20230712,20231227"],
+        "lc2l2_dates": ["20230217,20230524,20230921,20231218"],
+        "s2l2a_paths": ["s2l2a_000000_20230218.tif,s2l2a_000000_20230419.tif,s2l2a_000000_20230713.tif,s2l2a_000000_20231230.tif"],
+        "s1rtc_paths": ["s1rtc_000000_20230218.tif,s1rtc_000000_20230419.tif,s1rtc_000000_20230712.tif,s1rtc_000000_20231227.tif"],
+        "lc2l2_paths": ["lc2l2_000000_20230217.tif,lc2l2_000000_20230524.tif,lc2l2_000000_20230921.tif,lc2l2_000000_20231218.tif"],
+        "dem_paths": ["dem_000000.tif"],
+        "lulc": [2],
     }
-    for S2L2A_dates, id in zip(data['S2L2A_dates'], data['id']):
+    for S2L2A_dates, id in zip(data['s2l2a_dates'], data['id']):
         for date in S2L2A_dates.split(','):
-            create_dummy_image(base_dir / f"S2L2A_{id:06}_{date}.tif", (96, 96, 13), range(255))
-    for landsat_dates, id in zip(data['landsat_dates'], data['id']):
+            create_dummy_image(base_dir / f"s2l2a_{id:06}_{date}.tif", (96, 96, 13), range(255))
+    for landsat_dates, id in zip(data['lc2l2_dates'], data['id']):
         for date in landsat_dates.split(','):
-            create_dummy_image(base_dir / f"landsat_{id:06}_{date}.tif", (96, 96, 7), range(255))
-    for S1RTC_dates, id in zip(data['S1RTC_dates'], data['id']):
+            create_dummy_image(base_dir / f"lc2l2_{id:06}_{date}.tif", (96, 96, 7), range(255))
+    for S1RTC_dates, id in zip(data['s1rtc_dates'], data['id']):
         for date in S1RTC_dates.split(','):
-            create_dummy_image(base_dir / f"S1RTC_{id:06}_{date}.tif", (96, 96, 7), range(255))
+            create_dummy_image(base_dir / f"s1rtc_{id:06}_{date}.tif", (96, 96, 7), range(255))
     for id in data['id']:
         create_dummy_image(base_dir / f"dem_{id:06}.tif", (96, 96), range(255))
 

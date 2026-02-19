@@ -37,6 +37,73 @@ class GELOSLCDataSet(GELOSDataSet):
     4 time steps for each land cover chip
     """
 
+    MEANS =  {
+        "S1RTC": {
+            "VV": 0.14450763165950775,
+            "VH": 0.029020152986049652
+        },
+        "S2L2A": {
+            "COASTAL_AEROSOL": 1852.9951171875,
+            "BLUE": 2046.738525390625,
+            "GREEN": 2346.2802734375,
+            "RED": 2593.03857421875,
+            "RED_EDGE_1": 2900.828857421875,
+            "RED_EDGE_2": 3365.597900390625,
+            "RED_EDGE_3": 3576.141357421875,
+            "NIR_BROAD": 3657.3046875,
+            "NIR_NARROW": 3703.0908203125,
+            "WATER_VAPOR": 3709.93359375,
+            "SWIR_1": 3543.164794921875,
+            "SWIR_2": 3048.239990234375
+        },
+        "LC2S2": {
+            "coastal": 0.08165209740400314,
+            "blue": 0.09596806019544601,
+            "green": 0.1315794140100479,
+            "red": 0.1531316637992859,
+            "nir08": 0.2621993124485016,
+            "swir16": 0.23768098652362823,
+            "swir22": 0.18106447160243988
+        },
+        "DEM": {
+            "DEM": 642.7003173828125
+        }
+    }
+
+    STDS =  {
+        "S1RTC": {
+            "VV": 2.600670576095581,
+            "VH": 0.26772621273994446
+        },
+        "S2L2A": {
+            "COASTAL_AEROSOL": 1201.80078125,
+            "BLUE": 1267.075927734375,
+            "GREEN": 1316.0233154296875,
+            "RED": 1520.836669921875,
+            "RED_EDGE_1": 1518.5592041015625,
+            "RED_EDGE_2": 1419.7735595703125,
+            "RED_EDGE_3": 1442.878662109375,
+            "NIR_BROAD": 1476.5181884765625,
+            "NIR_NARROW": 1437.5333251953125,
+            "WATER_VAPOR": 1440.673095703125,
+            "SWIR_1": 1588.948974609375,
+            "SWIR_2": 1524.4881591796875
+        },
+        "LC2S2": {
+            "coastal": 0.15966829657554626,
+            "blue": 0.16089804470539093,
+            "green": 0.15540584921836853,
+            "red": 0.1680557280778885,
+            "nir08": 0.15390564501285553,
+            "swir16": 0.14630644023418427,
+            "swir22": 0.1311405450105667
+        },
+        "DEM": {
+            "DEM": 783.0748291015625
+        }
+    }
+
+
     S2RTC_BAND_NAMES = [
         "COASTAL_AEROSOL",
         "BLUE",
@@ -54,12 +121,6 @@ class GELOSLCDataSet(GELOSDataSet):
     S1RTC_BAND_NAMES = [
         "VV",
         "VH",
-        # TODO 2025-10-17 GELOS v0.40 does not differentiate ASC and DSC S1 passes
-        # "ASC_VV",
-        # "ASC_VH",
-        # "DSC_VV",
-        # "DSC_VH",
-        # "VV_VH",
     ]
     LC2L2_BAND_NAMES = [
         "coastal",  # Coastal/Aerosol (Band 1)
@@ -91,8 +152,6 @@ class GELOSLCDataSet(GELOSDataSet):
         self,
         data_root: str | Path,
         bands: dict[str, List[str]] = BAND_SETS["all"],
-        means: dict[str, dict[str, float]] | None = None,
-        stds: dict[str, dict[str, float]] | None = None,
         transform: A.Compose | None = None,
         concat_bands: bool = False,
         repeat_bands: dict[str, int] | None = None,
@@ -115,8 +174,6 @@ class GELOSLCDataSet(GELOSDataSet):
         super().__init__(
             bands=bands,
             all_band_names=self.all_band_names,
-            means=means,
-            stds=stds,
             transform=transform,
             concat_bands=concat_bands,
             repeat_bands=repeat_bands,
