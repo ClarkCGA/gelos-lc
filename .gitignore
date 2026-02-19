@@ -193,5 +193,5 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-.agent-module/
+CLAUDE.md
 .agents/

@@ -5,10 +5,13 @@ services:
       dockerfile: Dockerfile
       target: dev
     image: gelos-lc-dev
-    user: "${UID:-1000}:${GID:-100}"
-    group_add:
-      - users
     environment:
+      NB_UID: "${UID:-1000}"
+      NB_GID: "${GID:-100}"
+      NB_USER: jovyan
+      CHOWN_HOME: "yes"
+      CHOWN_HOME_OPTS: "-R"
+      GRANT_SUDO: "yes"
       PYTHONPATH: /app
     working_dir: /app
     ports:

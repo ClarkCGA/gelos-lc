@@ -1,4 +1,3 @@
-# lightning.pytorch==2.1.1
 seed_everything: 0
 trainer:
   accelerator: auto
@@ -11,6 +10,7 @@ trainer:
 data:
   class_path: gelos.gelosdatamodule.GELOSDataModule
   init_args:
+    dataset_class: src.gelosdataset_lc.GELOSLCDataSet
     batch_size: 1
     num_workers: 0
     bands:
@@ -45,30 +45,24 @@ model:
     output_format: parquet
     embed_file_key: filename 
     layers: [-1] # Model layers to extract embeddings from, -1 means the last layer
-    output_format: parquet
-    embed_file_key: filename 
-    #   temporal_pooling: keep
     embedding_pooling: null 
     has_cls: True
-    # temporal_cfg: 
-    #   temporal_wrapper: True
-    #   temporal_pooling: keep
 
 # define embedding extraction strategy names and lists of arguments for the embedding extraction function
 embedding_extraction_strategies:
-  CLS Token:
+  cls_token:
     - start: 0
       stop: 1
       step: 1
-  All Steps of Middle Patch:
- # as the first patch is the cls token, we index the middle as 19 rather than 18.
+  all_steps_of_middle_patch:
+ # as the first patch is the cls token, we index the middle as 15 rather than 14.
  # this is important for consistency with non-cls token models like terramind.
     - start: 15
       stop: null
       # start and step are determined by the patch H and W dimensions determined by the model and the input sizes.
       # in this case, as our inputs are 96x96 and prithvi eo 300m uses 16x16 patches, we have 36 patches per time step.
       step: 36
-  All Patches from April to June:
+  all_patches_from_april_to_june:
     - start: 37
       stop: 73
       step: 1
@@ -76,3 +70,4 @@ embedding_extraction_strategies:
   #   - start: 0
   #     stop: null
   #     step: 1
+    #   temporal_pooling: keep
