@@ -14,25 +14,6 @@ data:
     dataset_class: src.gelosdataset_lc.GELOSLCDataSet
     batch_size: 1
     num_workers: 2
-    bands:
-      S2L2A:
-      - COASTAL_AEROSOL
-      - BLUE
-      - GREEN
-      - RED
-      - RED_EDGE_1
-      - RED_EDGE_2
-      - RED_EDGE_3
-      - NIR_BROAD
-      - NIR_NARROW
-      - WATER_VAPOR
-      - SWIR_1
-      - SWIR_2
-      S1RTC:
-      - VV
-      - VH
-      DEM:
-      - DEM  
     repeat_bands:
       DEM: 4
     transform:

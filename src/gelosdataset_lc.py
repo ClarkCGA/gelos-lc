@@ -61,7 +61,7 @@ class GELOSLCDataSet(GELOSDataSet):
         # "DSC_VH",
         # "VV_VH",
     ]
-    LANDSAT_BAND_NAMES = [
+    LC2L2_BAND_NAMES = [
         "coastal",  # Coastal/Aerosol (Band 1)
         "blue",  # Blue (Band 2)
         "green",  # Green (Band 3)
@@ -74,14 +74,14 @@ class GELOSLCDataSet(GELOSDataSet):
     all_band_names = {
         "S1RTC": S1RTC_BAND_NAMES,
         "S2L2A": S2RTC_BAND_NAMES,
-        "landsat": LANDSAT_BAND_NAMES,
+        "LC2L2": LC2L2_BAND_NAMES,
         "DEM": DEM_BAND_NAMES,
     }
 
     rgb_bands = {
         "S1RTC": [],
         "S2L2A": ["RED", "GREEN", "BLUE"],
-        "landsat": ["red", "green", "blue"],
+        "LC2L2": ["red", "green", "blue"],
         "DEM": [],
     }
 
