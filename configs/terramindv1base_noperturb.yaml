@@ -76,8 +76,8 @@ embedding_extraction_strategies:
     - start: 0
       stop: null
       step: 1
-    - start: 18
-      stop: 19
+    - start: 14
+      stop: 15
       step: 1
   All Patches from April to June:
     - start: 1
