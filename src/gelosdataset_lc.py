@@ -97,7 +97,6 @@ class GELOSLCDataSet(GELOSDataSet):
         concat_bands: bool = False,
         repeat_bands: dict[str, int] | None = None,
         perturb_bands: dict[str, List[str]] | None = None,
-        perturb_alpha: float = 1,
     ) -> None:
         """
         Initializes an instance of GELOSLCDataSet.
@@ -111,7 +110,6 @@ class GELOSLCDataSet(GELOSDataSet):
         concat_bands (bool, optional): concatenate all modalities into the channel dimension
         repeat_bands (dict[str, int], optional): repeat bands when loading from disc, intended to repeat single time step modalities e.g. DEM
         perturb_bands (dict[str, List[str]], optional): perturb bands with additive gaussian noise. Dictionary defining modalities and bands for perturbation.
-        perturb_alpha (float, optional): relative weight given to source data vs perturbation noise. 0 signifies all noise, 1 signifies equal weights
         """
         
         super().__init__(
@@ -123,7 +121,6 @@ class GELOSLCDataSet(GELOSDataSet):
             concat_bands=concat_bands,
             repeat_bands=repeat_bands,
             perturb_bands=perturb_bands,
-            perturb_alpha=perturb_alpha,
             )
 
         self.data_root = Path(data_root)
