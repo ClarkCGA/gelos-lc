@@ -1,4 +1,6 @@
 # lightning.pytorch==2.1.1
+experiment_name: "Terramind V1 Base - Blue Band Perturbation"
+
 seed_everything: 0
 trainer:
   accelerator: auto
@@ -37,7 +39,7 @@ data:
       DEM: 4
     perturb_bands:
       S2L2A:
-        NIR_NARROW: 0.1
+        BLUE: 0.1
     transform:
       - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
       - class_path: albumentations.augmentations.geometric.resize.Resize
@@ -89,3 +91,19 @@ embedding_extraction_strategies:
   #   - start: 0
   #     stop: null
   #     step: 1
+style:
+  category_column: "lulc"
+  colors:
+    "1": "#419bdf"    # Water
+    "2": "#397d49"    # Trees
+    "5": "#e49635"    # Crops
+    "7": "#c4281b"    # Built Area
+    "8": "#a59b8f"    # Bare Ground
+    "11": "#e3e2c3"   # Rangeland
+  labels:
+    "1": "Water"
+    "2": "Trees"
+    "5": "Crops"
+    "7": "Built Area"
+    "8": "Bare Ground"
+    "11": "Rangeland"

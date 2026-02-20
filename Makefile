@@ -38,8 +38,6 @@ format:
 	ruff check --fix
 	ruff format
 
-
-
 ## Run tests
 .PHONY: test
 test:
@@ -59,6 +57,11 @@ sync_data_up:
 	
 
 
+
+## Calculate dataset statistics
+.PHONY: statistics
+statistics:
+	python src/calculate_statistics.py $(DATA_VERSION)
 
 ## Set up Python interpreter environment
 .PHONY: create_environment

@@ -27,9 +27,9 @@ import pandas as pd
 n_timesteps = 4
 config_yaml_names = [
     # Default configs evaluated by this script
-    "prithvieov2300_noperturb.yaml",
-    "prithvieov2600_noperturb.yaml",
-    "terramindv1base_noperturb.yaml",
+    "exp001_prithvi300_noperturb.yaml",
+    "exp004_prithvi600_noperturb.yaml",
+    "exp007_terramind_noperturb.yaml",
     # add more configs here
 ]
 # extraction_strategy = "All Steps of Middle Patch"
