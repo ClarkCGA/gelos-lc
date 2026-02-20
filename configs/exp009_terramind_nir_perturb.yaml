@@ -1,6 +1,8 @@
 # lightning.pytorch==2.1.1
 experiment_name: "Terramind V1 Base - NIR Band Perturbation"
 
+chip_tracker: "gelos_chip_tracker.geojson"
+
 seed_everything: 0
 trainer:
   accelerator: auto
