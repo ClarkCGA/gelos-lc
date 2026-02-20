@@ -1,6 +1,6 @@
 # lightning.pytorch==2.1.1
 experiment_name: "Terramind V1 Base - Blue Band Perturbation"
-
+data_version: "v0.50.1"
 chip_tracker: "gelos_chip_tracker.geojson"
 
 seed_everything: 0
