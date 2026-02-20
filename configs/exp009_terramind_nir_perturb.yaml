@@ -91,3 +91,21 @@ embedding_extraction_strategies:
   #   - start: 0
   #     stop: null
   #     step: 1
+
+
+style:
+  category_column: "lulc"
+  colors:
+    "1": "#419bdf"    # Water
+    "2": "#397d49"    # Trees
+    "5": "#e49635"    # Crops
+    "7": "#c4281b"    # Built Area
+    "8": "#a59b8f"    # Bare Ground
+    "11": "#e3e2c3"   # Rangeland
+  labels:
+    "1": "Water"
+    "2": "Trees"
+    "5": "Crops"
+    "7": "Built Area"
+    "8": "Bare Ground"
+    "11": "Rangeland"
