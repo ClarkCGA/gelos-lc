@@ -56,5 +56,10 @@ services:
     working_dir: /app
     volumes:
       - ./:/app/ 
+      - "${RAW_PATH}:/app/data/raw/"
+      - "${PROCESSED_PATH}:/app/data/processed/"
+      - "${EXTERNAL_PATH}:/app/data/external/"
+      - "${INTERIM_PATH}:/app/data/interim/"
       - "${GELOS_MODULE_PATH}:/app/gelos/" # until gelos is public, then change Dockerfile
+    shm_size: '2gb'
  

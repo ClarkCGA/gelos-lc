@@ -1,10 +1,11 @@
 # lightning.pytorch==2.1.1
+experiment_name: "Prithvi EO V2 300M - Blue Band Perturbation"
+
 seed_everything: 0
 trainer:
   accelerator: auto
   strategy: auto
-  devices:
-    - 1 
+  devices: auto
   num_nodes: 1
   callbacks: []
   max_epochs: 0
@@ -25,23 +26,19 @@ data:
         - SWIR_2
     perturb_bands:
       S2L2A:
-        NIR_NARROW: 0.1
+        BLUE: 0.1
     transform:
-        - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
-        - class_path: albumentations.PadIfNeeded
-          init_args:
-            min_height: 98
-            min_width: 98
-        - class_path: albumentations.pytorch.transforms.ToTensorV2
-        - class_path: terratorch.datasets.transforms.UnflattenTemporalFromChannels
-          init_args:
-            n_timesteps: 4
+      - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
+      - class_path: albumentations.pytorch.transforms.ToTensorV2
+      - class_path: terratorch.datasets.transforms.UnflattenTemporalFromChannels
+        init_args:
+          n_timesteps: 4
+
 model:
   class_path: terratorch.tasks.EmbeddingGenerationTask
-  title: Prithvi EO V2 600M
+  title: Prithvi EO V2 300M
   init_args:
-    model: prithvi_eo_v2_600
-    model_args:
+    model: prithvi_eo_v2_300
     model_args:
       bands:
         - BLUE
@@ -53,7 +50,10 @@ model:
       pretrained: true
     output_format: parquet
     embed_file_key: filename 
-    # layers: [-1] # Model layers to extract embeddings from, -1 means the last layer
+    layers: [-1] # Model layers to extract embeddings from, -1 means the last layer
+    output_format: parquet
+    embed_file_key: filename 
+    #   temporal_pooling: keep
     embedding_pooling: null 
     has_cls: True
     # temporal_cfg: 
@@ -67,24 +67,35 @@ embedding_extraction_strategies:
       stop: 1
       step: 1
   All Steps of Middle Patch:
- # as the first patch is the cls token, we index the middle as 25 rather than 24.
+ # as the first patch is the cls token, we index the middle as 19 rather than 18.
  # this is important for consistency with non-cls token models like terramind.
-    - start: 25
+    - start: 19
       stop: null
       # start and step are determined by the patch H and W dimensions determined by the model and the input sizes.
-      # in this case, as our inputs are 96x96 and prithvi eo 600m uses 14x14 patches,
-      # inputs are padded to 98x98 and we have 7x7 or 49 patches per time step.
-      step: 49
+      # in this case, as our inputs are 96x96 and prithvi eo 300m uses 16x16 patches, we have 36 patches per time step.
+      step: 36
   All Patches from April to June:
-    - start: 50
-      stop: 99
+    - start: 37
+      stop: 73
       step: 1
   # All Embeddings:
   #   - start: 0
   #     stop: null
   #     step: 1
 
-# define dimensionality reduction strategies for embeddings
-  # reduction_strategies:
-  #   tSNE:
-  #   PCA:
+style:
+  category_column: "lulc"
+  colors:
+    "1": "#419bdf"    # Water
+    "2": "#397d49"    # Trees
+    "5": "#e49635"    # Crops
+    "7": "#c4281b"    # Built Area
+    "8": "#a59b8f"    # Bare Ground
+    "11": "#e3e2c3"   # Rangeland
+  labels:
+    "1": "Water"
+    "2": "Trees"
+    "5": "Crops"
+    "7": "Built Area"
+    "8": "Bare Ground"
+    "11": "Rangeland

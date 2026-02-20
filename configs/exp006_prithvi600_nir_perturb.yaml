@@ -1,9 +1,12 @@
 # lightning.pytorch==2.1.1
+experiment_name: "Prithvi EO V2 600M - NIR Band Perturbation"
+
 seed_everything: 0
 trainer:
   accelerator: auto
   strategy: auto
-  devices: auto
+  devices:
+    - 1 
   num_nodes: 1
   callbacks: []
   max_epochs: 0
@@ -24,7 +27,7 @@ data:
         - SWIR_2
     perturb_bands:
       S2L2A:
-        BLUE: 0.1
+        NIR_NARROW: 0.1
     transform:
         - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
         - class_path: albumentations.PadIfNeeded
