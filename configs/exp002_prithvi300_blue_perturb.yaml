@@ -53,8 +53,6 @@ model:
     output_format: parquet
     embed_file_key: filename 
     layers: [-1] # Model layers to extract embeddings from, -1 means the last layer
-    output_format: parquet
-    embed_file_key: filename 
     #   temporal_pooling: keep
     embedding_pooling: null 
     has_cls: True
@@ -100,4 +98,4 @@ style:
     "5": "Crops"
     "7": "Built Area"
     "8": "Bare Ground"
-    "11": "Rangeland
+    "11": "Rangeland"

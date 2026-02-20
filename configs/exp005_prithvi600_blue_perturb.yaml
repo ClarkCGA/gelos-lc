@@ -45,7 +45,6 @@ model:
   init_args:
     model: prithvi_eo_v2_600
     model_args:
-    model_args:
       bands:
         - BLUE
         - GREEN

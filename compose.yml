@@ -33,33 +33,46 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
+   
   test:
     build:
       context: .
       dockerfile: Dockerfile
       target: test
     image: gelos-lc-test
+    user: "${UID}:${GID}"
     environment:
       PYTHONPATH: /app
+      HOME: /tmp
     working_dir: /app
-    volumes:
-      - ./:/app/ 
-      - "${GELOS_MODULE_PATH}:/app/gelos/" # until gelos is public, then change Dockerfile
+
   prod:
     build:
       context: .
       dockerfile: Dockerfile
       target: prod
     image: gelos-lc-prod
+    user: "${UID}:${GID}"
     environment:
-      PYTHONPATH: /app
+      PYTHONPATH: /app 
+      HOME: /tmp
+      TORCHINDUCTOR_CACHE_DIR: /tmp/torch_cache
     working_dir: /app
     volumes:
-      - ./:/app/ 
       - "${RAW_PATH}:/app/data/raw/"
       - "${PROCESSED_PATH}:/app/data/processed/"
       - "${EXTERNAL_PATH}:/app/data/external/"
       - "${INTERIM_PATH}:/app/data/interim/"
-      - "${GELOS_MODULE_PATH}:/app/gelos/" # until gelos is public, then change Dockerfile
+      - "./scripts/:/app/scripts/"
+      - "./configs/:/app/configs/"
+      - "./lightning_logs/:/app/lightning_logs/"
     shm_size: '2gb'
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: pixi run bash /app/scripts/run_embeddings.sh
  

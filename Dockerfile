@@ -1,6 +1,7 @@
-FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime AS base
+FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04 AS base
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
     make \
     curl \
     git \
@@ -15,19 +16,20 @@ RUN git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe && \
     make -C /tmp/tippecanoe install && \
     rm -rf /tmp/tippecanoe
 
-RUN curl -fsSL https://pixi.sh/install.sh | sh
-ENV PATH="/root/.pixi/bin:${PATH}"
+RUN curl -fsSL https://pixi.sh/install.sh | PIXI_HOME=/usr/local sh
 
 WORKDIR /app
 ENV PYTHONPATH=/app
 
-# COPY pyproject.toml README.md Makefile LICENSE /app/
-# COPY src/ /app/src/
-# RUN pixi install
+COPY pyproject.toml README.md Makefile LICENSE /app/
+COPY src/ /app/src/
+COPY gelos/ /app/gelos/
+RUN CONDA_OVERRIDE_CUDA="12.8" pixi install
+RUN chmod -R a+rwX /app/.pixi
 
 FROM base AS test
 
-# COPY tests/ /app/tests/
+COPY tests/ /app/tests/
 
 CMD ["pixi", "run", "make", "test"]
 
@@ -35,7 +37,7 @@ FROM base AS prod
 
 CMD ["pixi", "run", "make", "-h"]
 
-FROM quay.io/jupyter/pytorch-notebook:cuda12-python-3.13 AS dev
+FROM quay.io/jupyter/pytorch-notebook:python-3.11 AS dev
 
 USER root
 
@@ -47,7 +49,7 @@ RUN apt-get update \
 
 RUN curl -fsSL https://pixi.sh/install.sh | PIXI_HOME=/usr/local sh
 ENV PATH="/app/.pixi/envs/default/bin:${PATH}"
-
+ENV CONDA_OVERRIDE_CUDA="12.8"
 WORKDIR /app
 
 CMD ["pixi", "run", "start-notebook.py"]

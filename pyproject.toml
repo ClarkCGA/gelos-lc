@@ -35,7 +35,7 @@ force-sort-within-sections = true
 name = "gelos-lc"
 description = "Implementation of Geospatial Exploration of Latent Embedding Space for Land Cover Dataset"
 version = "0.1.0"
-channels = ["conda-forge"]
+channels = ["conda-forge", "pytorch"]
 platforms = ["linux-64"]
 
 [tool.pixi.dependencies]
@@ -43,7 +43,10 @@ python = "~=3.11.0"
 pytest = "*"
 ruff = "*"
 pip = "*"
-terratorch = "1.1.1"
+pytorch = {version = "2.*", channel = "pytorch"}
+pytorch-cuda = {version = "12.*", channel = "pytorch"}
+torchvision = {version = "*", channel = "pytorch"}
+terratorch = "1.1.1*"
 pyarrow = "*"
 typer = "*"
 tqdm = "*"
@@ -71,5 +74,5 @@ path = "."
 editable = true
 
 [tool.pixi.pypi-dependencies.gelos]
-path = "./gelos"
+path = "gelos"
 editable = true
