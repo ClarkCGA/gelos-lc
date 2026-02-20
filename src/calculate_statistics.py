@@ -21,7 +21,7 @@ def main(
         Path("/app/data/raw"), "--data-root", "-d", help="Root directory for raw data."
     ),
     output_dir: Path = typer.Option(
-        Path("/app/data/processed"), "--output-dir", "-o", help="Root directory for processed output."
+        Path("/app/data/interim"), "--output-dir", "-o", help="Root directory for processed output."
     ),
     batch_size: int = typer.Option(8, "--batch-size", "-b", help="Batch size for the dataloader."),
     num_workers: int = typer.Option(16, "--num-workers", "-n", help="Number of dataloader workers."),
