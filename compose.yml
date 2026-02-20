@@ -25,7 +25,7 @@ services:
        - "${INTERIM_PATH}:/app/data/interim/"
        - "${GELOS_MODULE_PATH}:/app/gelos/"
     shm_size: '32gb'
-    command: "pixi run start-notebook.py ${JUPYTERLAB_ARGS}"
+    command: "start-notebook.py ${JUPYTERLAB_ARGS}"
     deploy:
       resources:
         reservations:
@@ -74,5 +74,4 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    command: pixi run bash /app/scripts/run_embeddings.sh
  

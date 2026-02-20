@@ -35,7 +35,7 @@ force-sort-within-sections = true
 name = "gelos-lc"
 description = "Implementation of Geospatial Exploration of Latent Embedding Space for Land Cover Dataset"
 version = "0.1.0"
-channels = ["conda-forge", "pytorch"]
+channels = ["conda-forge"]
 platforms = ["linux-64"]
 
 [tool.pixi.dependencies]
@@ -43,9 +43,6 @@ python = "~=3.11.0"
 pytest = "*"
 ruff = "*"
 pip = "*"
-pytorch = {version = "2.*", channel = "pytorch"}
-pytorch-cuda = {version = "12.*", channel = "pytorch"}
-torchvision = {version = "*", channel = "pytorch"}
 terratorch = "1.1.1*"
 pyarrow = "*"
 typer = "*"
@@ -74,5 +71,22 @@ path = "."
 editable = true
 
 [tool.pixi.pypi-dependencies.gelos]
-path = "gelos"
-editable = true
+git = "https://github.com/ClarkCGA/gelos.git"
+branch = "main"
+
+# CPU-only pytorch for the default environment
+[tool.pixi.feature.cpu.dependencies]
+pytorch-cpu = "*"
+
+# CUDA feature: use `pixi shell -e cuda` for local GPU support
+[tool.pixi.feature.cuda]
+channels = ["conda-forge", "pytorch"]
+
+[tool.pixi.feature.cuda.dependencies]
+pytorch = {version = "2.*", channel = "pytorch"}
+torchvision = {version = "*", channel = "pytorch"}
+pytorch-cuda = {version = "12.*", channel = "pytorch"}
+
+[tool.pixi.environments]
+default = {features = ["cpu"], solve-group = "default"}
+cuda = {features = ["cuda"], solve-group = "cuda"}

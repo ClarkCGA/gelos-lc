@@ -37,16 +37,14 @@ Repository for Geospatial Exploration of Latent Observation Space (GELOS)
 ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
 │                         generated with `pip freeze > requirements.txt`
 │
-├── setup.cfg          <- Configuration file for flake8
-│
 └── src   <- Source code for use in this project.
     │
     ├── __init__.py             <- Makes this directory Python module
     │
     ├── pmtiles_generation.py                <- Create PMTiles for Gelos App
     │
-    └── pmtiles_upload.py                <- Upload PMTiles for Gelos App
-```
-
---------
+    ├── pmtiles_upload.py                <- Upload PMTiles for Gelos App
+``` │ 
+    └── gelosdataset_lc.py                  <- GELOS LC Dataset module
+    --------
 

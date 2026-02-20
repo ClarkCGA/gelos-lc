@@ -1,4 +1,6 @@
-FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04 AS base
+FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime AS base
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -10,46 +12,62 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     libxcb1 \
     && rm -rf /var/lib/apt/lists/*
-    
+
 RUN git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe && \
     make -C /tmp/tippecanoe -j && \
     make -C /tmp/tippecanoe install && \
     rm -rf /tmp/tippecanoe
 
-RUN curl -fsSL https://pixi.sh/install.sh | PIXI_HOME=/usr/local sh
-
 WORKDIR /app
 ENV PYTHONPATH=/app
 
+COPY requirements.txt /app/
+RUN uv pip install --system --no-cache -r requirements.txt
+RUN uv pip install --system --no-cache "git+https://github.com/ClarkCGA/gelos.git"
+
 COPY pyproject.toml README.md Makefile LICENSE /app/
 COPY src/ /app/src/
-COPY gelos/ /app/gelos/
-RUN CONDA_OVERRIDE_CUDA="12.8" pixi install
-RUN chmod -R a+rwX /app/.pixi
+RUN uv pip install --system --no-cache --no-deps -e .
 
 FROM base AS test
 
 COPY tests/ /app/tests/
 
-CMD ["pixi", "run", "make", "test"]
+CMD ["python", "-m", "pytest", "tests"]
 
 FROM base AS prod
 
-CMD ["pixi", "run", "make", "-h"]
+CMD ["make", "-h"]
 
-FROM quay.io/jupyter/pytorch-notebook:python-3.11 AS dev
+FROM quay.io/jupyter/pytorch-notebook:cuda12-python-3.11 AS dev
 
 USER root
 
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
 RUN apt-get update \
-    && apt-get install -y \
+    && apt-get install -y --no-install-recommends \
     curl \
     make \
+    git \
+    build-essential \
+    libsqlite3-dev \
+    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -fsSL https://pixi.sh/install.sh | PIXI_HOME=/usr/local sh
-ENV PATH="/app/.pixi/envs/default/bin:${PATH}"
-ENV CONDA_OVERRIDE_CUDA="12.8"
+RUN git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe && \
+    make -C /tmp/tippecanoe -j && \
+    make -C /tmp/tippecanoe install && \
+    rm -rf /tmp/tippecanoe
+
 WORKDIR /app
 
-CMD ["pixi", "run", "start-notebook.py"]
+COPY requirements.txt /app/
+RUN uv pip install --system --no-cache -r requirements.txt
+
+COPY pyproject.toml README.md Makefile LICENSE /app/
+COPY src/ /app/src/
+COPY gelos/ /app/gelos/
+RUN uv pip install --system --no-cache --no-deps -e . -e gelos/
+
+CMD ["start-notebook.py"]
