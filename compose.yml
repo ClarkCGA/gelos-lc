@@ -24,6 +24,7 @@ services:
        - "${EXTERNAL_PATH}:/app/data/external/"
        - "${INTERIM_PATH}:/app/data/interim/"
        - "${GELOS_MODULE_PATH}:/app/gelos/"
+       - "./docker/10-install-gelos.sh:/usr/local/bin/before-notebook.d/10-install-gelos.sh:ro"
     shm_size: '32gb'
     command: "start-notebook.py ${JUPYTERLAB_ARGS}"
     deploy:

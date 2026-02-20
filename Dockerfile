@@ -27,11 +27,13 @@ RUN uv pip install --system --no-cache "git+https://github.com/ClarkCGA/gelos.gi
 
 COPY pyproject.toml README.md Makefile LICENSE /app/
 COPY src/ /app/src/
-RUN uv pip install --system --no-cache --no-deps -e .
+RUN uv pip install --system --no-cache --no-deps -e . && \
+    chmod -R a+w /app
 
 FROM base AS test
 
 COPY tests/ /app/tests/
+RUN chmod -R a+w /app/tests
 
 CMD ["python", "-m", "pytest", "tests"]
 
@@ -67,7 +69,6 @@ RUN uv pip install --system --no-cache -r requirements.txt
 
 COPY pyproject.toml README.md Makefile LICENSE /app/
 COPY src/ /app/src/
-COPY gelos/ /app/gelos/
-RUN uv pip install --system --no-cache --no-deps -e . -e gelos/
+RUN uv pip install --system --no-cache --no-deps -e .
 
 CMD ["start-notebook.py"]
