@@ -9,7 +9,6 @@ rioxarray
 scikit-learn
 geopandas
 pillow
-jupyterlab
 python-dotenv
 mkdocs
 timm

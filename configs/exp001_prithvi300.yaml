@@ -92,11 +92,6 @@ embedding_extraction_strategies:
     plots:
       - type: tsne_scatter
         transform: tsne
-  # All Embeddings:
-  #   - start: 0
-  #     stop: null
-  #     step: 1
-    #   temporal_pooling: keep
 
 style:
   category_column: "lulc"

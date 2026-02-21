@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "src"
-version = "0.0.1"
+version = "1.0.0"
 description = "Implementation of Geospatial Exploration of Latent Embedding Space for Land Cover Dataset"
 authors = [
   { name = "CGA" },
@@ -34,7 +34,7 @@ force-sort-within-sections = true
 [tool.pixi.workspace]
 name = "gelos-lc"
 description = "Implementation of Geospatial Exploration of Latent Embedding Space for Land Cover Dataset"
-version = "0.1.0"
+version = "1.0.0"
 channels = ["conda-forge"]
 platforms = ["linux-64"]
 
