@@ -46,6 +46,7 @@ points_df.to_json(app_files_dir / "points.json")
 # copy all embedding files to json in the app files directory
 for embedding_csv_path in embedding_csv_paths:
     embed_df = gpd.read_file(embedding_csv_path)
+    embed_df = embed_df.rename(columns={})
     embed_df.to_json(app_files_dir / f"{embedding_csv_path.stem}.json")
 
 
