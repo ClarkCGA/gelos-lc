@@ -1,5 +1,5 @@
-experiment_name: "Prithvi EO V2 300M"
-data_version: "v0.50.1"
+experiment_name: "Prithvi EO V2 300M - NIR Band Perturbation"
+data_version: "v0.50.0"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
 
@@ -26,6 +26,9 @@ data:
         - NIR_NARROW
         - SWIR_1
         - SWIR_2
+    perturb_bands:
+      S2L2A:
+        NIR_NARROW: 0.1
     transform:
       - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
       - class_path: albumentations.pytorch.transforms.ToTensorV2
@@ -48,9 +51,9 @@ model:
         - SWIR_2
       pretrained: true
     output_format: parquet
-    embed_file_key: filename 
+    embed_file_key: filename
     layers: [-1] # Model layers to extract embeddings from, -1 means the last layer
-    embedding_pooling: null 
+    embedding_pooling: null
     has_cls: True
 
 # define embedding extraction strategy names and lists of arguments for the embedding extraction function
@@ -61,13 +64,6 @@ embedding_extraction_strategies:
     - start: 0
       stop: 1
       step: 1
-    transforms:
-      - type: tsne
-    plots:
-      - type: tsne_scatter
-        transform: tsne
-        params:
-          axis_lim: 160
   all_steps_of_middle_patch:
  # as the first patch is the cls token, we index the middle as 15 rather than 14.
  # this is important for consistency with non-cls token models like terramind.
@@ -78,26 +74,12 @@ embedding_extraction_strategies:
       # start and step are determined by the patch H and W dimensions determined by the model and the input sizes.
       # in this case, as our inputs are 96x96 and prithvi eo 300m uses 16x16 patches, we have 36 patches per time step.
       step: 36
-    transforms:
-      - type: tsne
-    plots:
-      - type: tsne_scatter
-        transform: tsne
-        params:
-          axis_lim: 160
   all_patches_from_april_to_june:
     title: "All Patches from April to June"
     slice_args:
     - start: 37
       stop: 73
       step: 1
-    transforms:
-      - type: tsne
-    plots:
-      - type: tsne_scatter
-        transform: tsne
-        params:
-          axis_lim: 160
 
 style:
   category_column: "lulc"

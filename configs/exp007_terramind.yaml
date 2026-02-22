@@ -89,6 +89,8 @@ embedding_extraction_strategies:
     plots:
       - type: tsne_scatter
         transform: tsne
+        params:
+          axis_lim: 160
   all_patches_from_april_to_june:
     title: "All Patches from April to June"
     slice_args:
@@ -100,6 +102,8 @@ embedding_extraction_strategies:
     plots:
       - type: tsne_scatter
         transform: tsne
+        params:
+          axis_lim: 160
   all_embeddings:
     title: "All Embeddings"
     slice_args:
@@ -111,6 +115,8 @@ embedding_extraction_strategies:
     plots:
       - type: tsne_scatter
         transform: tsne
+        params:
+          axis_lim: 160
 
 style:
   category_column: "lulc"

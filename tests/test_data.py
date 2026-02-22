@@ -28,14 +28,14 @@ def dummy_gelos_data(tmp_path) -> str:
         "dem_paths": ["dem_000000.tif"],
         "lulc": [2],
     }
-    for S2L2A_dates, id in zip(data['s2l2a_dates'], data['id']):
-        for date in S2L2A_dates.split(','):
+    for s2l2a_dates, id in zip(data['s2l2a_dates'], data['id']):
+        for date in s2l2a_dates.split(','):
             create_dummy_image(base_dir / f"s2l2a_{id:06}_{date}.tif", (96, 96, 13), range(255))
-    for landsat_dates, id in zip(data['lc2l2_dates'], data['id']):
-        for date in landsat_dates.split(','):
+    for lc2l2_dates, id in zip(data['lc2l2_dates'], data['id']):
+        for date in lc2l2_dates.split(','):
             create_dummy_image(base_dir / f"lc2l2_{id:06}_{date}.tif", (96, 96, 7), range(255))
-    for S1RTC_dates, id in zip(data['s1rtc_dates'], data['id']):
-        for date in S1RTC_dates.split(','):
+    for s1rtc_dates, id in zip(data['s1rtc_dates'], data['id']):
+        for date in s1rtc_dates.split(','):
             create_dummy_image(base_dir / f"s1rtc_{id:06}_{date}.tif", (96, 96, 7), range(255))
     for id in data['id']:
         create_dummy_image(base_dir / f"dem_{id:06}.tif", (96, 96), range(255))

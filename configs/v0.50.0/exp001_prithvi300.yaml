@@ -1,5 +1,5 @@
 experiment_name: "Prithvi EO V2 300M"
-data_version: "v0.50.1"
+data_version: "v0.50.0"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
 
@@ -66,8 +66,6 @@ embedding_extraction_strategies:
     plots:
       - type: tsne_scatter
         transform: tsne
-        params:
-          axis_lim: 160
   all_steps_of_middle_patch:
  # as the first patch is the cls token, we index the middle as 15 rather than 14.
  # this is important for consistency with non-cls token models like terramind.
@@ -83,8 +81,6 @@ embedding_extraction_strategies:
     plots:
       - type: tsne_scatter
         transform: tsne
-        params:
-          axis_lim: 160
   all_patches_from_april_to_june:
     title: "All Patches from April to June"
     slice_args:
@@ -96,8 +92,6 @@ embedding_extraction_strategies:
     plots:
       - type: tsne_scatter
         transform: tsne
-        params:
-          axis_lim: 160
 
 style:
   category_column: "lulc"
