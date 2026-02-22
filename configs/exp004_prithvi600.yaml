@@ -1,4 +1,4 @@
-experiment_name: "Prithvi EO V2 600M - NIR Band Perturbation"
+experiment_name: "Prithvi EO V2 600M"
 data_version: "v0.50.1"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
@@ -26,9 +26,6 @@ data:
         - NIR_NARROW
         - SWIR_1
         - SWIR_2
-    perturb_bands:
-      S2L2A:
-        NIR_NARROW: 0.1
     transform:
       - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
       - class_path: albumentations.PadIfNeeded
@@ -68,6 +65,13 @@ embedding_extraction_strategies:
     - start: 0
       stop: 1
       step: 1
+    transforms:
+      - type: tsne
+    plots:
+      - type: tsne_scatter
+        transform: tsne
+        params:
+          axis_lim: 160
   all_steps_of_middle_patch:
  # as the first patch is the cls token, we index the middle as 25 rather than 24.
  # this is important for consistency with non-cls token models like terramind.
@@ -79,12 +83,26 @@ embedding_extraction_strategies:
       # in this case, as our inputs are 96x96 and prithvi eo 600m uses 14x14 patches,
       # inputs are padded to 98x98 and we have 7x7 or 49 patches per time step.
       step: 49
+    transforms:
+      - type: tsne
+    plots:
+      - type: tsne_scatter
+        transform: tsne
+        params:
+          axis_lim: 160
   all_patches_from_april_to_june:
     title: "All Patches from April to June"
     slice_args:
     - start: 50
       stop: 99
       step: 1
+    transforms:
+      - type: tsne
+    plots:
+      - type: tsne_scatter
+        transform: tsne
+        params:
+          axis_lim: 160
 
 style:
   category_column: "lulc"

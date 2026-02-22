@@ -62,6 +62,14 @@ sync_data_up:
 .PHONY: statistics
 statistics:
 	python src/calculate_statistics.py $(DATA_VERSION)
+	
+.PHONY: generation
+generation:
+	python -m gelos.generation
+	
+.PHONY: analysis
+analysis:
+	python -m gelos.analysis
 
 ## Set up Python interpreter environment
 .PHONY: create_environment

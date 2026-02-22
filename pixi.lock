@@ -9105,8 +9105,8 @@ packages:
   timestamp: 1766143791089
 - pypi: ./
   name: src
-  version: 0.0.1
-  sha256: 14047a75cd190791bf2228f271a1700e19e1b7d8c85cde361b568e2a265c70cb
+  version: 1.0.0
+  sha256: 9e43aa81afa661f7a23da334df9b3201251e8080dec5038b3936c310477888d7
   requires_python: ~=3.11.0
 - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.3-pyhd8ed1ab_1.conda
   sha256: 570da295d421661af487f1595045760526964f41471021056e993e73089e9c41
