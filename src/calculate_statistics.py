@@ -13,39 +13,38 @@ from src.gelosdataset_lc import GELOSLCDataSet
 
 app = typer.Typer()
 
-
-@app.command()
-def main(
-    data_version: str = typer.Argument(..., help="Data version subdirectory (e.g. v0.50.1)."),
-    data_root: Path = typer.Option(
-        Path("/app/data/raw"), "--data-root", "-d", help="Root directory for raw data."
-    ),
-    output_dir: Path = typer.Option(
-        Path("/app/data/interim"), "--output-dir", "-o", help="Root directory for processed output."
-    ),
-    batch_size: int = typer.Option(8, "--batch-size", "-b", help="Batch size for the dataloader."),
-    num_workers: int = typer.Option(16, "--num-workers", "-n", help="Number of dataloader workers."),
+def make_dataloader(
+    data_root: Path,
+    batch_size: int = 8,
+    num_workers: int = 16,
 ):
-    """Compute per-band means and standard deviations across the full GELOSLCDataSet."""
-    data_root = data_root / data_version
-    output_path = output_dir / data_version / "statistics.json"
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    logger.info(f"Data root: {data_root}")
-    logger.info(f"Output path: {output_path}")
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    logger.info(f"Using device: {device}")
+    no_norm_means = {
+        sensor: {band: 0 for band in bands}
+        for sensor, bands in GELOSLCDataSet.all_band_names.items()
+    }
+    no_norm_stds = {
+        sensor: {band: 1 for band in bands}
+        for sensor, bands in GELOSLCDataSet.all_band_names.items()
+    }
 
     datamodule = GELOSDataModule(
         data_root=data_root,
         dataset_class=GELOSLCDataSet,
         batch_size=batch_size,
         num_workers=num_workers,
+        means=no_norm_means,
+        stds=no_norm_stds,
     )
     datamodule.setup("predict")
     loader = datamodule.predict_dataloader()
     dataset = loader.dataset
+    return loader, dataset
+
+
+def compute_statistics(loader, dataset, device=None):
+    """Compute per-band means and standard deviations across the full dataset."""
+    if device is None:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     modalities = list(dataset.bands.keys())
 
@@ -91,10 +90,39 @@ def main(
         formatted_means[modality] = {band: mean for band, mean in zip(band_names, mean_values)}
         formatted_stds[modality] = {band: std for band, std in zip(band_names, std_values)}
 
-    results = {"MEANS": formatted_means, "STDS": formatted_stds}
+    return {"MEANS": formatted_means, "STDS": formatted_stds}
 
-    logger.info("MEANS = " + json.dumps(formatted_means, indent=4))
-    logger.info("STDS = " + json.dumps(formatted_stds, indent=4))
+
+@app.command()
+def main(
+    data_version: str = typer.Argument(..., help="Data version subdirectory (e.g. v0.50.1)."),
+    data_dir: Path = typer.Option(
+        Path("/app/data/raw"), "--data-dir", "-d", help="Directory for raw data."
+    ),
+    output_dir: Path = typer.Option(
+        Path("/app/data/interim"), "--output-dir", "-o", help="Root directory for processed output."
+    ),
+    batch_size: int = typer.Option(8, "--batch-size", "-b", help="Batch size for the dataloader."),
+    num_workers: int = typer.Option(16, "--num-workers", "-n", help="Number of dataloader workers."),
+):
+    """Compute per-band means and standard deviations across the full GELOSLCDataSet."""
+    data_root = data_dir / data_version
+    output_path = output_dir / data_version / "statistics.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger.info(f"Data root: {data_root}")
+    logger.info(f"Output path: {output_path}")
+
+    loader, dataset = make_dataloader(data_root, batch_size, num_workers)
+    logger.info(f"Dataset modalities: {list(dataset.bands.keys())}")
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    logger.info(f"Using device: {device}")
+
+    results = compute_statistics(loader, dataset, device)
+
+    logger.info("MEANS = " + json.dumps(results["MEANS"], indent=4))
+    logger.info("STDS = " + json.dumps(results["STDS"], indent=4))
 
     with open(output_path, "w") as f:
         json.dump(results, f, indent=4)
