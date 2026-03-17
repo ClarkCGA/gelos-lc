@@ -179,7 +179,7 @@ class GELOSLCDataSet(GELOSDataSet):
 
         self.data_root = Path(data_root)
         self.gdf = gpd.read_file(self.data_root / "gelos_chip_tracker.geojson")
-        self.zfill_length = int(self.gdf["id"].astype(str).str.len().max())
+        self.zfill_length = 6
  
     def __len__(self) -> int:
         return len(self.gdf)

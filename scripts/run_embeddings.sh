@@ -1,4 +1,5 @@
 #!/bin/bash
+# this script runs all yamls in parallel rather than sequentially
 set -euo pipefail
 
 gpus=(0 1 2 3 4 5 6 7)
