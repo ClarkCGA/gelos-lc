@@ -139,10 +139,8 @@ class GELOSLCDataSet(GELOSDataSet):
     }
 
     rgb_bands = {
-        "S1RTC": [],
         "S2L2A": ["RED", "GREEN", "BLUE"],
         "LC2L2": ["red", "green", "blue"],
-        "DEM": [],
     }
 
     BAND_SETS = {"all": all_band_names, "rgb": rgb_bands}
@@ -181,7 +179,7 @@ class GELOSLCDataSet(GELOSDataSet):
 
         self.data_root = Path(data_root)
         self.gdf = gpd.read_file(self.data_root / "gelos_chip_tracker.geojson")
-        self.zfill_length = int(self.gdf["id"].astype(str).str.len().max())
+        self.zfill_length = 6
  
     def __len__(self) -> int:
         return len(self.gdf)
@@ -220,10 +218,12 @@ class GELOSLCDataSet(GELOSDataSet):
         Returns:
             a matplotlib Figure with the rendered sample
         """
-        if isinstance(sample["image"], dict):
-            nrows = len(self.bands.keys())
-        else:
-            nrows = 1
+        matches = set(vis_bands.keys()) & set(self.bands.keys())
+        nrows = len(matches)
+        
+        if nrows == 0:
+            raise Exception(f"None of {list(self.bands.keys())} in visualization band sensors {list(vis_bands.keys())}")
+            
         ncols = 4
 
         fig, axs = plt.subplots(
@@ -238,7 +238,7 @@ class GELOSLCDataSet(GELOSDataSet):
             sens = list(self.bands.keys())[0]
             sample["image"] = {sens: sample["image"]}
 
-        for row, sens in enumerate(self.bands.keys()):
+        for row, sens in enumerate(matches):
             band_indices = [self.bands[sens].index(band) for band in vis_bands[sens]]
             img = sample["image"][sens].numpy()
             img = scale(img)
@@ -248,8 +248,8 @@ class GELOSLCDataSet(GELOSDataSet):
                 axs[row, col].imshow(img_t)
                 axs[row, col].axis("off")
 
-        if show_titles:
-            axs[row, 0].set_title(sens)
+            if show_titles:
+                axs[row, 0].set_title(sens)
 
         if suptitle is not None:
             plt.suptitle(suptitle)
