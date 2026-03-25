@@ -4,7 +4,7 @@ set -euo pipefail
 
 gpus=(0 1 2 3 4 5 6 7)
 i=0
-for cfg in /app/configs/*.yaml; do
+for cfg in $1; do
   CUDA_VISIBLE_DEVICES=${gpus[$((i % ${#gpus[@]}))]} \
     python -m gelos.embedding_generation \
       --yaml-path "$cfg" \
