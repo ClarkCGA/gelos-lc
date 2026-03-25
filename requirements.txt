@@ -7,6 +7,7 @@ pandas
 matplotlib
 rioxarray
 scikit-learn
+umap-learn
 geopandas
 pillow
 python-dotenv
