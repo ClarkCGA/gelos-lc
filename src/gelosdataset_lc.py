@@ -2,13 +2,12 @@ from pathlib import Path
 from typing import Any, List
 
 import albumentations as A
+from gelos.gelosdataset import GELOSDataSet
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
 import rioxarray as rxr
 import torch
-
-from gelos.gelosdataset import GELOSDataSet
 
 
 def scale(array: np.array):
@@ -38,10 +37,7 @@ class GELOSLCDataSet(GELOSDataSet):
     """
 
     MEANS = {
-        "S1RTC": {
-            "VV": 0.23718494176864624,
-            "VH": 0.05088871344923973
-        },
+        "S1RTC": {"VV": 0.23718494176864624, "VH": 0.05088871344923973},
         "S2L2A": {
             "COASTAL_AEROSOL": 609.0277099609375,
             "BLUE": 682.1007690429688,
@@ -54,7 +50,7 @@ class GELOSLCDataSet(GELOSDataSet):
             "NIR_NARROW": 1292.264404296875,
             "WATER_VAPOR": 1296.0284423828125,
             "SWIR_1": 1293.037109375,
-            "SWIR_2": 1112.1793212890625
+            "SWIR_2": 1112.1793212890625,
         },
         "LC2L2": {
             "coastal": 0.04326515644788742,
@@ -63,18 +59,13 @@ class GELOSLCDataSet(GELOSDataSet):
             "red": 0.09055962413549423,
             "nir08": 0.15706466138362885,
             "swir16": 0.15178132057189941,
-            "swir22": 0.11629538238048553
+            "swir22": 0.11629538238048553,
         },
-        "DEM": {
-            "DEM": 690.3432006835938
-        }
+        "DEM": {"DEM": 690.3432006835938},
     }
 
     STDS = {
-        "S1RTC": {
-            "VV": 2.3691890239715576,
-            "VH": 0.24191336333751678
-        },
+        "S1RTC": {"VV": 2.3691890239715576, "VH": 0.24191336333751678},
         "S2L2A": {
             "COASTAL_AEROSOL": 1071.2337646484375,
             "BLUE": 1176.518310546875,
@@ -87,7 +78,7 @@ class GELOSLCDataSet(GELOSDataSet):
             "NIR_NARROW": 1970.2528076171875,
             "WATER_VAPOR": 1976.5057373046875,
             "SWIR_1": 2027.414306640625,
-            "SWIR_2": 1798.0020751953125
+            "SWIR_2": 1798.0020751953125,
         },
         "LC2L2": {
             "coastal": 0.10800547897815704,
@@ -96,11 +87,9 @@ class GELOSLCDataSet(GELOSDataSet):
             "red": 0.13768944144248962,
             "nir08": 0.16932472586631775,
             "swir16": 0.1689019352197647,
-            "swir22": 0.14119330048561096
+            "swir22": 0.14119330048561096,
         },
-        "DEM": {
-            "DEM": 703.6107177734375
-        }
+        "DEM": {"DEM": 703.6107177734375},
     }
 
     S2RTC_BAND_NAMES = [
@@ -167,7 +156,7 @@ class GELOSLCDataSet(GELOSDataSet):
         repeat_bands (dict[str, int], optional): repeat bands when loading from disc, intended to repeat single time step modalities e.g. DEM
         perturb_bands (dict[str, List[str]], optional): perturb bands with additive gaussian noise. Dictionary defining modalities and bands for perturbation.
         """
-        
+
         super().__init__(
             bands=bands,
             all_band_names=self.all_band_names,
@@ -175,12 +164,12 @@ class GELOSLCDataSet(GELOSDataSet):
             concat_bands=concat_bands,
             repeat_bands=repeat_bands,
             perturb_bands=perturb_bands,
-            )
+        )
 
         self.data_root = Path(data_root)
         self.gdf = gpd.read_file(self.data_root / "gelos_chip_tracker.geojson")
         self.zfill_length = 6
- 
+
     def __len__(self) -> int:
         return len(self.gdf)
 
@@ -220,10 +209,12 @@ class GELOSLCDataSet(GELOSDataSet):
         """
         matches = set(vis_bands.keys()) & set(self.bands.keys())
         nrows = len(matches)
-        
+
         if nrows == 0:
-            raise Exception(f"None of {list(self.bands.keys())} in visualization band sensors {list(vis_bands.keys())}")
-            
+            raise Exception(
+                f"None of {list(self.bands.keys())} in visualization band sensors {list(vis_bands.keys())}"
+            )
+
         ncols = 4
 
         fig, axs = plt.subplots(

@@ -68,7 +68,7 @@ embedding_extraction_strategies:
     transforms:
       - type: tsne
     plots:
-      - type: tsne_scatter
+      - type: scatter_2d
         transform: tsne
   all_steps_of_middle_patch:
  # as the first patch is the cls token, we index the middle as 25 rather than 24.
@@ -84,7 +84,7 @@ embedding_extraction_strategies:
     transforms:
       - type: tsne
     plots:
-      - type: tsne_scatter
+      - type: scatter_2d
         transform: tsne
   all_patches_from_april_to_june:
     title: "All Patches from April to June"
@@ -95,7 +95,7 @@ embedding_extraction_strategies:
     transforms:
       - type: tsne
     plots:
-      - type: tsne_scatter
+      - type: scatter_2d
         transform: tsne
 
 style:

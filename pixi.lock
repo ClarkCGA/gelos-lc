@@ -9127,7 +9127,7 @@ packages:
 - pypi: ./
   name: src
   version: 1.0.0
-  sha256: c9c461144de8ddfc5d6c73a961bb34fd1160ede3537ff42143a8b31dde09b81d
+  sha256: b8d62a6ba999776ec9f3c2ed5a23fc8f4b2d3e4242861258cba4afe967dbca69
   requires_python: ~=3.11.0
 - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.3-pyhd8ed1ab_1.conda
   sha256: 570da295d421661af487f1595045760526964f41471021056e993e73089e9c41

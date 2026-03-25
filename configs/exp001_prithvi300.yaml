@@ -64,7 +64,7 @@ embedding_extraction_strategies:
     transforms:
       - type: tsne
     plots:
-      - type: tsne_scatter
+      - type: scatter_2d
         transform: tsne
         params:
           axis_lim: 160
@@ -81,7 +81,7 @@ embedding_extraction_strategies:
     transforms:
       - type: tsne
     plots:
-      - type: tsne_scatter
+      - type: scatter_2d
         transform: tsne
         params:
           axis_lim: 160
@@ -94,7 +94,7 @@ embedding_extraction_strategies:
     transforms:
       - type: tsne
     plots:
-      - type: tsne_scatter
+      - type: scatter_2d
         transform: tsne
         params:
           axis_lim: 160

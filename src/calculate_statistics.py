@@ -3,15 +3,16 @@
 import json
 from pathlib import Path
 
-import torch
+from gelos.gelosdatamodule import GELOSDataModule
 from loguru import logger
+import torch
 from tqdm import tqdm
 import typer
 
-from gelos.gelosdatamodule import GELOSDataModule
 from src.gelosdataset_lc import GELOSLCDataSet
 
 app = typer.Typer()
+
 
 def make_dataloader(
     data_root: Path,
@@ -100,10 +101,15 @@ def main(
         Path("/app/data/raw"), "--data-dir", "-d", help="Directory for raw data."
     ),
     output_dir: Path = typer.Option(
-        Path("/app/data/interim"), "--output-dir", "-o", help="Root directory for processed output."
+        Path("/app/data/interim"),
+        "--output-dir",
+        "-o",
+        help="Root directory for processed output.",
     ),
     batch_size: int = typer.Option(8, "--batch-size", "-b", help="Batch size for the dataloader."),
-    num_workers: int = typer.Option(16, "--num-workers", "-n", help="Number of dataloader workers."),
+    num_workers: int = typer.Option(
+        16, "--num-workers", "-n", help="Number of dataloader workers."
+    ),
 ):
     """Compute per-band means and standard deviations across the full GELOSLCDataSet."""
     data_root = data_dir / data_version
