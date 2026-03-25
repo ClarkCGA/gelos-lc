@@ -60,6 +60,7 @@ mkdocs = "*"
 timm = "*"
 einops = "*"
 loguru = "*"
+umap-learn = ">=0.5.11,<0.6"
 
 [tool.pixi.pypi-dependencies]
 awscli = "*"
