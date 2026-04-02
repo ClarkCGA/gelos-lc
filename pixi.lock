@@ -614,7 +614,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/fd/ad/bf1e423e8417347b69c8887b739da003208140ec31b733826139a9289ad1/awscli-1.44.43-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/25/dc/cf3b2ec4a419b20d2cd6ba8e1961bc59b7ec9801339628e31551dac23801/botocore-1.42.53-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/93/69/e391bd51bc08ed9141ecd899a0ddb61ab6465309f1eb470905c0c8868081/docutils-0.19-py3-none-any.whl
-      - pypi: git+https://github.com/ClarkCGA/gelos.git?branch=main#b8bec07674c8c8aa4b9e9257d4ac6a2a57a46734
+      - pypi: git+https://github.com/ClarkCGA/gelos.git?tag=v0.2.0#cb4f7c0dc984013330d52daf709f2c0c9bc9bea1
       - pypi: https://files.pythonhosted.org/packages/14/2f/967ba146e6d58cf6a652da73885f52fc68001525b4197effc174321d70b4/jmespath-1.1.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/44/b5/a96872e5184f354da9c84ae119971a0a4c221fe9b27a4d94bd43f2596727/pyasn1-0.6.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/e9/93/0c0f002031f18b53af7a6166103c02b9c0667be528944137cc954ec921b3/rsa-4.7.2-py3-none-any.whl
@@ -1218,7 +1218,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/fd/ad/bf1e423e8417347b69c8887b739da003208140ec31b733826139a9289ad1/awscli-1.44.43-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/25/dc/cf3b2ec4a419b20d2cd6ba8e1961bc59b7ec9801339628e31551dac23801/botocore-1.42.53-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/93/69/e391bd51bc08ed9141ecd899a0ddb61ab6465309f1eb470905c0c8868081/docutils-0.19-py3-none-any.whl
-      - pypi: git+https://github.com/ClarkCGA/gelos.git?branch=main#b8bec07674c8c8aa4b9e9257d4ac6a2a57a46734
+      - pypi: git+https://github.com/ClarkCGA/gelos.git?tag=v0.2.0#cb4f7c0dc984013330d52daf709f2c0c9bc9bea1
       - pypi: https://files.pythonhosted.org/packages/14/2f/967ba146e6d58cf6a652da73885f52fc68001525b4197effc174321d70b4/jmespath-1.1.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/44/b5/a96872e5184f354da9c84ae119971a0a4c221fe9b27a4d94bd43f2596727/pyasn1-0.6.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/e9/93/0c0f002031f18b53af7a6166103c02b9c0667be528944137cc954ec921b3/rsa-4.7.2-py3-none-any.whl
@@ -3047,9 +3047,9 @@ packages:
   purls: []
   size: 575109
   timestamp: 1771530561157
-- pypi: git+https://github.com/ClarkCGA/gelos.git?branch=main#b8bec07674c8c8aa4b9e9257d4ac6a2a57a46734
+- pypi: git+https://github.com/ClarkCGA/gelos.git?tag=v0.2.0#cb4f7c0dc984013330d52daf709f2c0c9bc9bea1
   name: gelos
-  version: 0.0.1
+  version: 0.2.0
   requires_python: ~=3.11.0
 - conda: https://conda.anaconda.org/conda-forge/noarch/geopandas-1.1.2-pyhd8ed1ab_0.conda
   sha256: 7c3e5dc62c0b3d067a6f517ea9176e9d52682499d4afb78704354a60f37c5444
@@ -9126,8 +9126,8 @@ packages:
   timestamp: 1766143791089
 - pypi: ./
   name: src
-  version: 1.0.0
-  sha256: b8d62a6ba999776ec9f3c2ed5a23fc8f4b2d3e4242861258cba4afe967dbca69
+  version: 0.1.0
+  sha256: 1918207716c1fabad6d024e0c5125b55762c2c0938593f5ea67f2ea29dae9001
   requires_python: ~=3.11.0
 - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.3-pyhd8ed1ab_1.conda
   sha256: 570da295d421661af487f1595045760526964f41471021056e993e73089e9c41

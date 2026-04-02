@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "src"
-version = "1.0.0"
+version = "0.1.0"
 description = "Implementation of Geospatial Exploration of Latent Embedding Space for Land Cover Dataset"
 authors = [
   { name = "CGA" },
@@ -73,7 +73,7 @@ editable = true
 
 [tool.pixi.pypi-dependencies.gelos]
 git = "https://github.com/ClarkCGA/gelos.git"
-branch = "main"
+tag = "v0.2.0"
 
 # CPU-only pytorch for the default environment
 [tool.pixi.feature.cpu.dependencies]

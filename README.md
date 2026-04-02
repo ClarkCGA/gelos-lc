@@ -6,6 +6,19 @@
 
 Repository for Geospatial Exploration of Latent Observation Space (GELOS)
 
+## Sample Commands
+
+Running generation for all configs in a directory in parallel, using 8 GPUs:
+```
+docker compose run --rm prod scripts/run_embeddings.sh /app/configs/*
+```
+
+Running analysis for all configs in the default configs/ directory:
+```
+docker compose run --rm prod make analysis
+```
+
+
 ## Project Organization
 
 ```
