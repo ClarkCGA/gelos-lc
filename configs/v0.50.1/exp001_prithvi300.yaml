@@ -63,11 +63,14 @@ embedding_extraction_strategies:
       step: 1
     transforms:
       - type: tsne
+      - type: umap
     plots:
       - type: scatter_2d
         transform: tsne
         params:
           axis_lim: 160
+      - type: scatter_2d
+        transform: umap
   all_steps_of_middle_patch:
  # as the first patch is the cls token, we index the middle as 15 rather than 14.
  # this is important for consistency with non-cls token models like terramind.

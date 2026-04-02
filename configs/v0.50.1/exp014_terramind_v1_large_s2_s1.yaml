@@ -1,4 +1,4 @@
-rxperiment_name: "Terramind V1 Base"
+experiment_name: "Terramind V1 Large"
 data_version: "v0.50.1"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
@@ -35,10 +35,6 @@ data:
       S1RTC:
       - VV
       - VH
-      DEM:
-      - DEM
-    repeat_bands:
-      DEM: 4
     transform:
       - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
       - class_path: albumentations.augmentations.geometric.resize.Resize
@@ -53,14 +49,13 @@ data:
 
 model:
   class_path: terratorch.tasks.EmbeddingGenerationTask
-  title: Terramind V1 Base
+  title: Terramind V1 Large
   init_args:
-    model: terramind_v1_base
+    model: terramind_v1_large
     model_args:
       modalities:
         - S2L2A
         - S1RTC
-        - DEM
       merge_method: mean
       pretrained: True
     output_format: parquet

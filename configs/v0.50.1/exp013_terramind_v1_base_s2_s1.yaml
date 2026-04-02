@@ -35,10 +35,6 @@ data:
       S1RTC:
       - VV
       - VH
-      DEM:
-      - DEM
-    repeat_bands:
-      DEM: 4
     transform:
       - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
       - class_path: albumentations.augmentations.geometric.resize.Resize
@@ -60,7 +56,6 @@ model:
       modalities:
         - S2L2A
         - S1RTC
-        - DEM
       merge_method: mean
       pretrained: True
     output_format: parquet
