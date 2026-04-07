@@ -64,6 +64,7 @@ services:
       - "${PROCESSED_PATH}:/app/data/processed/"
       - "${EXTERNAL_PATH}:/app/data/external/"
       - "${INTERIM_PATH}:/app/data/interim/"
+      - "./reports/:/app/reports/"
       - "./scripts/:/app/scripts/"
       - "./configs/:/app/configs/"
       - "./lightning_logs/:/app/lightning_logs/"

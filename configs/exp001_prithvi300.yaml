@@ -71,6 +71,8 @@ embedding_extraction_strategies:
           axis_lim: 160
       - type: scatter_2d
         transform: umap
+        params:
+          axis_lim: ~
   all_steps_of_middle_patch:
  # as the first patch is the cls token, we index the middle as 15 rather than 14.
  # this is important for consistency with non-cls token models like terramind.
