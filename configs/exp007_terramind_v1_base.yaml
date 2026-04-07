@@ -104,24 +104,16 @@ embedding_extraction_strategies:
       step: 1
     transforms:
       - type: tsne
+      - type: umap
     plots:
       - type: scatter_2d
         transform: tsne
         params:
           axis_lim: 160
-  all_embeddings:
-    title: "All Embeddings"
-    slice_args:
-    - start: 0
-      stop: null
-      step: 1
-    transforms:
-      - type: tsne
-    plots:
       - type: scatter_2d
-        transform: tsne
+        transform: umap
         params:
-          axis_lim: 160
+          axis_lim: ~
 
 style:
   category_column: "lulc"
