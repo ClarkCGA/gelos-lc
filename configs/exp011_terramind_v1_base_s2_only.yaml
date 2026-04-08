@@ -1,4 +1,4 @@
-Experiment_name: "Terramind V1 Base - S2 Only"
+experiment_name: "Terramind V1 Base - S2 Only"
 data_version: "v0.50.1"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
@@ -87,6 +87,11 @@ embedding_extraction_strategies:
         transform: umap
         params:
           axis_lim: ~
+      - type: temporal_cosine_similarity
+        transform: raw
+        params:
+          n_timesteps: 4                                                                                                                               
+          timestep_labels: ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"]
   all_patches_from_april_to_june:
     title: "All Patches from April to June"
     slice_args:

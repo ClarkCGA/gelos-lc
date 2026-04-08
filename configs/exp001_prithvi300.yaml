@@ -85,11 +85,21 @@ embedding_extraction_strategies:
       step: 36
     transforms:
       - type: tsne
+      - type: umap
     plots:
       - type: scatter_2d
         transform: tsne
         params:
           axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+      - type: temporal_cosine_similarity
+        transform: raw
+        params:
+          n_timesteps: 4                                                                                                                               
+          timestep_labels: ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"]
   all_patches_from_april_to_june:
     title: "All Patches from April to June"
     slice_args:
@@ -98,11 +108,16 @@ embedding_extraction_strategies:
       step: 1
     transforms:
       - type: tsne
+      - type: umap
     plots:
       - type: scatter_2d
         transform: tsne
         params:
           axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
 
 style:
   category_column: "lulc"
