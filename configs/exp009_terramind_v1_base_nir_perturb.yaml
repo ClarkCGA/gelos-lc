@@ -92,6 +92,15 @@ embedding_extraction_strategies:
     - start: 1
       stop: 2
       step: 1
+  four_patches_from_april_to_june:
+    title: "Four Patches from April to June"
+    slice_args:
+    - start: 1
+      stop: 2
+      step: 1
+    - start: 13
+      stop: 17
+      step: 1
 
 style:
   category_column: "lulc"

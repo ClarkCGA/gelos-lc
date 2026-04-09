@@ -71,6 +71,11 @@ generation:
 analysis:
 	python -m gelos.analysis
 
+## Run cross-experiment comparisons
+.PHONY: comparison
+comparison:
+	python -m gelos.comparison
+
 ## Set up Python interpreter environment
 .PHONY: create_environment
 create_environment:

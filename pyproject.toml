@@ -74,7 +74,7 @@ editable = true
 
 [tool.pixi.pypi-dependencies.gelos]
 git = "https://github.com/ClarkCGA/gelos.git"
-tag = "v0.2.21"
+tag = "v0.3.1"
 
 # CPU-only pytorch for the default environment
 [tool.pixi.feature.cpu.dependencies]

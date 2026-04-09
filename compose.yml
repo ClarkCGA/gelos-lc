@@ -55,7 +55,7 @@ services:
     image: gelos-lc-prod
     user: "${UID}:${GID}"
     environment:
-      PYTHONPATH: /app 
+      PYTHONPATH: /app
       HOME: /tmp
       TORCHINDUCTOR_CACHE_DIR: /tmp/torch_cache
     working_dir: /app

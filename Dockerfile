@@ -23,7 +23,7 @@ ENV PYTHONPATH=/app
 
 COPY requirements.txt /app/
 RUN uv pip install --system --no-cache -r requirements.txt
-RUN uv pip install --system --no-cache "git+https://github.com/ClarkCGA/gelos.git@v0.2.21"
+RUN uv pip install --system --no-cache "git+https://github.com/ClarkCGA/gelos.git@v0.3.1"
 
 COPY pyproject.toml README.md Makefile LICENSE /app/
 COPY src/ /app/src/
