@@ -1,0 +1,33 @@
+comparison_name: "KNN Purity — Terramind Base Sensor Ablation @ Middle Patch"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp007_terramind_v1_base"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "TM Base | All Sensors"
+  - data_version: "v0.50.1"
+    config: "exp011_terramind_v1_base_s2_only"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "TM Base | S2 Only"
+  - data_version: "v0.50.1"
+    config: "exp013_terramind_v1_base_s2_s1"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "TM Base | S2 + S1"
+
+comp_metrics:
+  - type: knn_purity_comparison
+
+comp_plots:
+  - type: knn_purity_plot
+    metric: knn_purity_comparison

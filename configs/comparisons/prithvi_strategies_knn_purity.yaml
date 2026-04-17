@@ -1,0 +1,38 @@
+comparison_name: "KNN Purity — Prithvi: CLS Token vs Middle Patch"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp001_prithvi300"
+    strategy: "cls_token"
+    layer: "layer_23"
+    label: "Prithvi 300M | CLS Token"
+  - data_version: "v0.50.1"
+    config: "exp001_prithvi300"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "Prithvi 300M | Middle Patch"
+  - data_version: "v0.50.1"
+    config: "exp004_prithvi600"
+    strategy: "cls_token"
+    layer: "layer_31"
+    label: "Prithvi 600M | CLS Token"
+  - data_version: "v0.50.1"
+    config: "exp004_prithvi600"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_31"
+    label: "Prithvi 600M | Middle Patch"
+
+comp_metrics:
+  - type: knn_purity_comparison
+
+comp_plots:
+  - type: knn_purity_plot
+    metric: knn_purity_comparison

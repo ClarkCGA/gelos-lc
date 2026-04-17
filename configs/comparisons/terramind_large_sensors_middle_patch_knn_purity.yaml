@@ -1,0 +1,33 @@
+comparison_name: "KNN Purity — Terramind Large Sensor Ablation @ Middle Patch"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp010_terramind_v1_large"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "TM Large | All Sensors"
+  - data_version: "v0.50.1"
+    config: "exp012_terramind_v1_large_s2_only"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "TM Large | S2 Only"
+  - data_version: "v0.50.1"
+    config: "exp014_terramind_v1_large_s2_s1"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "TM Large | S2 + S1"
+
+comp_metrics:
+  - type: knn_purity_comparison
+
+comp_plots:
+  - type: knn_purity_plot
+    metric: knn_purity_comparison
