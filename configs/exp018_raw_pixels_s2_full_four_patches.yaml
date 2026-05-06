@@ -1,4 +1,4 @@
-experiment_name: "Terramind V1 Large S1 + S2"
+experiment_name: "Raw Pixels S2 12-band"
 data_version: "v0.50.1"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
@@ -32,9 +32,6 @@ data:
       - WATER_VAPOR
       - SWIR_1
       - SWIR_2
-      S1RTC:
-      - VV
-      - VH
     transform:
       - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
       - class_path: albumentations.augmentations.geometric.resize.Resize
@@ -48,36 +45,23 @@ data:
           n_timesteps: 4
 
 model:
-  class_path: terratorch.tasks.EmbeddingGenerationTask
-  title: Terramind V1 Large
+  class_path: gelos.raw_pixels.RawPixelEmbeddingTask
+  title: "Raw Pixels (S2 12-band)"
   init_args:
-    model: terramind_v1_large
-    model_args:
-      modalities:
-        - S2L2A
-        - S1RTC
-      merge_method: mean
-      pretrained: True
-    output_format: parquet
+    patch_size: 16
     embed_file_key: filename
-    layers: [-1] # Model layers to extract embeddings from, -1 means the last layer
-    embedding_pooling: null
-    has_cls: False
-    temporal_cfg:
-      temporal_wrapper: True
-      temporal_pooling: keep
 
-# define embedding extraction strategy names and lists of arguments for the embedding extraction function
+raw_pixel_extraction:
+  four_patches_from_april_to_june:
+    patches: center_2x2
+    timesteps: [1]
+
 embedding_extraction_strategies:
-  # since terramind embeddings are nested lists, the first args dict gets all time steps, the second gets patch at idx 18 (center)
-  all_steps_of_middle_patch:
-    title: "All Steps of Middle Patch"
+  four_patches_from_april_to_june:
+    title: "Four Patches from April to June (Raw Pixels)"
     slice_args:
     - start: 0
       stop: null
-      step: 1
-    - start: 14
-      stop: 15
       step: 1
     transforms:
       - type: tsne
@@ -98,50 +82,6 @@ embedding_extraction_strategies:
         transform: umap
         params:
           axis_lim: ~
-      - type: temporal_cosine_similarity
-        transform: raw
-        params:
-          n_timesteps: 4
-          timestep_labels: ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"]
-    models:
-      - type: random_forest
-        transform: raw
-  all_patches_from_april_to_june:
-    title: "All Patches from April to June"
-    slice_args:
-    - start: 1
-      stop: 2
-      step: 1
-    transforms:
-      - type: tsne
-    plots:
-      - type: scatter_2d
-        transform: tsne
-        params:
-          axis_lim: 160
-  four_patches_from_april_to_june:
-    title: "Four Patches from April to June"
-    slice_args:
-    - start: 1
-      stop: 2
-      step: 1
-    - start: 13
-      stop: 17
-      step: 1
-    transforms:
-      - type: tsne
-    metrics:
-        - type: pca_ablation
-          params:
-            variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
-        - type: knn_purity
-          params:
-            k_values: [1, 2, 5, 10, 20, 50]
-    plots:
-      - type: scatter_2d
-        transform: tsne
-        params:
-          axis_lim: 160
 
 style:
   category_column: "lulc"

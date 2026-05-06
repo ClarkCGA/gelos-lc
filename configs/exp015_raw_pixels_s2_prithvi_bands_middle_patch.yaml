@@ -1,0 +1,98 @@
+experiment_name: "Raw Pixels S2 Prithvi Bands"
+data_version: "v0.50.1"
+chip_tracker: "gelos_chip_tracker.geojson"
+chip_id_column: "id"
+
+seed_everything: 0
+trainer:
+  accelerator: auto
+  strategy: auto
+  devices: auto
+  num_nodes: 1
+  callbacks: []
+  max_epochs: 0
+
+data:
+  class_path: gelos.gelosdatamodule.GELOSDataModule
+  init_args:
+    dataset_class: src.gelosdataset_lc.GELOSLCDataSet
+    batch_size: 1
+    num_workers: 0
+    bands:
+      S2L2A:
+        - BLUE
+        - GREEN
+        - RED
+        - NIR_NARROW
+        - SWIR_1
+        - SWIR_2
+    transform:
+      - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
+      - class_path: albumentations.pytorch.transforms.ToTensorV2
+      - class_path: terratorch.datasets.transforms.UnflattenTemporalFromChannels
+        init_args:
+          n_timesteps: 4
+
+model:
+  class_path: gelos.raw_pixels.RawPixelEmbeddingTask
+  title: "Raw Pixels (S2 Prithvi Bands)"
+  init_args:
+    patch_size: 16
+    embed_file_key: filename
+
+raw_pixel_extraction:
+  all_steps_of_middle_patch:
+    patches: center_1x1
+    timesteps: all
+
+embedding_extraction_strategies:
+  all_steps_of_middle_patch:
+    title: "All Steps of Middle Patch (Raw Pixels)"
+    slice_args:
+    - start: 0
+      stop: null
+      step: 1
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+        - type: pca_ablation
+          params:
+            variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+        - type: knn_purity
+          params:
+            k_values: [1, 2, 5, 10, 20, 50]
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+      - type: temporal_cosine_similarity
+        transform: raw
+        params:
+          n_timesteps: 4
+          timestep_labels: ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"]
+    models:
+      - type: random_forest
+        transform: raw
+
+style:
+  category_column: "lulc"
+  colors:
+    "1": "#419bdf"    # Water
+    "2": "#397d49"    # Trees
+    "5": "#e49635"    # Crops
+    "7": "#c4281b"    # Built Area
+    "8": "#a59b8f"    # Bare Ground
+    "11": "#e3e2c3"   # Rangeland
+  labels:
+    "1": "Water"
+    "2": "Trees"
+    "5": "Crops"
+    "7": "Built Area"
+    "8": "Bare Ground"
+    "11": "Rangeland"
