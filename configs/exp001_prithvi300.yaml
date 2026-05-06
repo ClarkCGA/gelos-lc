@@ -100,6 +100,9 @@ embedding_extraction_strategies:
         - type: knn_purity
           params:
             k_values: [1, 2, 5, 10, 20, 50]
+    models:
+      - type: random_forest
+        transform: raw
     plots:
       - type: scatter_2d
         transform: tsne
@@ -112,7 +115,7 @@ embedding_extraction_strategies:
       - type: temporal_cosine_similarity
         transform: raw
         params:
-          n_timesteps: 4                                                                                                                               
+          n_timesteps: 4
           timestep_labels: ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"]
   all_patches_from_april_to_june:
     title: "All Patches from April to June"
@@ -123,6 +126,31 @@ embedding_extraction_strategies:
     transforms:
       - type: tsne
       - type: umap
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+  four_patches_from_april_to_june:
+    title: "Four Patches from April to June"
+    slice_args:
+    - start: 73
+      stop: 77
+      step: 1
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+        - type: pca_ablation
+          params:
+            variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+        - type: knn_purity
+          params:
+            k_values: [1, 2, 5, 10, 20, 50]
     plots:
       - type: scatter_2d
         transform: tsne
