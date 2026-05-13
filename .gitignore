@@ -197,3 +197,4 @@ CLAUDE.md
 .agents/
 gelos/
 compose.override.yml
+*.pptx
