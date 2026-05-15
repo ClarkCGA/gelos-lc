@@ -1,0 +1,58 @@
+experiment_name: "AlphaEarth Annual (Middle Patch)"
+data_version: "v0.50.1"
+chip_tracker: "gelos_chip_tracker.geojson"
+chip_id_column: "id"
+
+data:
+  class_path: gelos.gelosdatamodule.GELOSDataModule
+  init_args:
+    dataset_class: src.gelosdataset_lc.GELOSLCDataSet
+    batch_size: 1
+    num_workers: 0
+    bands:
+      S2L2A:
+        - BLUE
+        - GREEN
+        - RED
+
+cloud_embedding:
+  backend: alphaearth
+  reference_sensor: S2L2A
+  patch_size: 16
+  year_strategy:
+    type: from_filename
+    sensor: S2L2A
+    pattern: '_(\d{4})\d{4}\.tif$'
+  init_args: {}
+  extraction_strategies:
+    middle_patch:
+      title: "Middle patch (AlphaEarth annual)"
+      patches: center_1x1
+      pool: flatten
+
+embedding_extraction_strategies:
+  middle_patch:
+    title: "Middle Patch (AlphaEarth)"
+    slice_args:
+      - {start: 0, stop: null, step: 1}
+    metrics:
+      - type: knn_purity
+        params:
+          k_values: [1, 2, 5, 10, 20, 50]
+
+style:
+  category_column: "lulc"
+  colors:
+    "1":  "#419bdf"
+    "2":  "#397d49"
+    "5":  "#e49635"
+    "7":  "#c4281b"
+    "8":  "#a59b8f"
+    "11": "#e3e2c3"
+  labels:
+    "1":  "Water"
+    "2":  "Trees"
+    "5":  "Crops"
+    "7":  "Built Area"
+    "8":  "Bare Ground"
+    "11": "Rangeland"

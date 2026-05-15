@@ -1,5 +1,7 @@
 FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime AS base
 
+ARG GELOS_VERSION=v0.3.3
+
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -23,7 +25,8 @@ ENV PYTHONPATH=/app
 
 COPY requirements.txt /app/
 RUN uv pip install --system --no-cache -r requirements.txt
-RUN uv pip install --system --no-cache "git+https://github.com/ClarkCGA/gelos.git@v0.3.1"
+RUN uv pip install --system --no-cache \
+    "gelos[alphaearth] @ git+https://github.com/ClarkCGA/gelos.git@${GELOS_VERSION}"
 
 COPY pyproject.toml README.md Makefile LICENSE /app/
 COPY src/ /app/src/
@@ -42,6 +45,8 @@ FROM base AS prod
 CMD ["make", "-h"]
 
 FROM quay.io/jupyter/pytorch-notebook:cuda12-python-3.11 AS dev
+
+ARG GELOS_VERSION=v0.3.3
 
 USER root
 
@@ -66,6 +71,8 @@ WORKDIR /app
 
 COPY requirements.txt /app/
 RUN uv pip install --system --no-cache -r requirements.txt
+RUN uv pip install --system --no-cache \
+    "gelos[alphaearth] @ git+https://github.com/ClarkCGA/gelos.git@${GELOS_VERSION}"
 
 COPY pyproject.toml README.md Makefile LICENSE /app/
 COPY src/ /app/src/
