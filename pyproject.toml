@@ -49,34 +49,23 @@ jupyterlab = "*"
 python-dotenv = "*"
 mkdocs = "*"
 python-pptx = ">=1.0.2,<2"
+plotly = "*"
 
+# Python-level deps come through pip so pixi resolves the same package
+# universe Docker does. torch/torchvision are pinned to match the
+# pytorch/pytorch:2.8.0-cuda12.9 base image used by the Dockerfile — bump as a
+# pair when the Dockerfile base image moves.
 [tool.pixi.pypi-dependencies]
 awscli = "*"
 mkdocs = "*"
 python-dotenv = "*"
+torch = "==2.8.*"
+torchvision = "==0.23.*"
 
 [tool.pixi.pypi-dependencies.src]
 path = "."
 editable = true
 
-[tool.pixi.pypi-dependencies.gelos]
-git = "https://github.com/ClarkCGA/gelos.git"
-tag = "v0.3.3"
-extras = ["alphaearth"]
-
-# CPU-only pytorch for the default environment
-[tool.pixi.feature.cpu.dependencies]
-pytorch-cpu = "*"
-
-# CUDA feature: use `pixi shell -e cuda` for local GPU support
-[tool.pixi.feature.cuda]
-channels = ["conda-forge", "pytorch"]
-
-[tool.pixi.feature.cuda.dependencies]
-pytorch = {version = "2.*", channel = "pytorch"}
-torchvision = {version = "*", channel = "pytorch"}
-pytorch-cuda = {version = "12.*", channel = "pytorch"}
-
-[tool.pixi.environments]
-default = {features = ["cpu"], solve-group = "default"}
-cuda = {features = ["cuda"], solve-group = "cuda"}
+# gelos is installed via `make dev-install` (editable from ../gelos) rather than
+# pixi, so its WIP dependency tree doesn't have to flow through pixi's solver.
+# Docker builds install gelos with `uv pip` for the same reason.

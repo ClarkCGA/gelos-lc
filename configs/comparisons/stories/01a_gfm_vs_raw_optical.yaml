@@ -1,0 +1,39 @@
+comparison_name: "KNN Purity — Story 1a: Optical GFMs vs Raw S2 Pixels"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp001_prithvi300"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "Prithvi 300M"
+    color: "#1f4e8c"
+  - data_version: "v0.50.1"
+    config: "exp004_prithvi600"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_31"
+    label: "Prithvi 600M"
+    color: "#00838f"
+  - data_version: "v0.50.1"
+    config: "exp015_raw_pixels_s2_prithvi_bands_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "all_steps_of_middle_patch"
+    label: "Raw Pixels (S2 6-band)"
+    color: "#cccccc"
+
+comp_metrics:
+  - type: knn_purity_comparison
+  - type: knn_purity_per_query_comparison
+
+comp_plots:
+  - type: knn_purity_plot
+    metric: knn_purity_comparison
+  - type: knn_purity_distribution_plot
+    metric: knn_purity_per_query_comparison

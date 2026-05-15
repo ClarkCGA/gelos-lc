@@ -15,7 +15,13 @@ PYTHON_INTERPRETER = python
 .PHONY: requirements
 requirements:
 	pixi install
-	
+
+
+## Install pixi env, then editable-install ../gelos so its deps come from pip
+.PHONY: dev-install
+dev-install: requirements
+	pip install -e "../gelos[alphaearth]"
+
 
 
 

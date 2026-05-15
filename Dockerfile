@@ -23,8 +23,7 @@ RUN git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe && \
 WORKDIR /app
 ENV PYTHONPATH=/app
 
-COPY requirements.txt /app/
-RUN uv pip install --system --no-cache -r requirements.txt
+RUN uv pip install --system --no-cache awscli mkdocs ruff pytest
 RUN uv pip install --system --no-cache \
     "gelos[alphaearth] @ git+https://github.com/ClarkCGA/gelos.git@${GELOS_VERSION}"
 
@@ -69,8 +68,7 @@ RUN git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe && \
 
 WORKDIR /app
 
-COPY requirements.txt /app/
-RUN uv pip install --system --no-cache -r requirements.txt
+RUN uv pip install --system --no-cache awscli mkdocs ruff pytest
 RUN uv pip install --system --no-cache \
     "gelos[alphaearth] @ git+https://github.com/ClarkCGA/gelos.git@${GELOS_VERSION}"
 
