@@ -1,0 +1,46 @@
+comparison_name: "KNN Purity — Story 6: Temporal Context — Terramind S2+S1 (Middle Patch vs 4 Patches)"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp013_terramind_v1_base_s2_s1"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "TM Base | S2 + S1 | Middle Patch"
+    color: "#c45a5a"
+  - data_version: "v0.50.1"
+    config: "exp013_terramind_v1_base_s2_s1"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_11"
+    label: "TM Base | S2 + S1 | 4 Patches"
+    color: "#8b1a1a"
+  - data_version: "v0.50.1"
+    config: "exp019_raw_pixels_s2_s1_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "all_steps_of_middle_patch"
+    label: "Raw Pixels (S2 + S1) | Middle Patch"
+    color: "#999999"
+  - data_version: "v0.50.1"
+    config: "exp020_raw_pixels_s2_s1_four_patches"
+    strategy: "four_patches_from_april_to_june"
+    layer: "four_patches_from_april_to_june"
+    label: "Raw Pixels (S2 + S1) | 4 Patches"
+    color: "#555555"
+
+
+comp_metrics:
+  - type: knn_purity_comparison
+  - type: knn_purity_per_query_comparison
+
+comp_plots:
+  - type: knn_purity_plot
+    metric: knn_purity_comparison
+  - type: knn_purity_distribution_plot
+    metric: knn_purity_per_query_comparison

@@ -1,0 +1,39 @@
+comparison_name: "KNN Purity — Story 3: Terramind Base vs Large"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp007_terramind_v1_base"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "TM Base | All Sensors"
+    color: "#8b1a1a"
+  - data_version: "v0.50.1"
+    config: "exp010_terramind_v1_large"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "TM Large | All Sensors"
+    color: "#c75a00"
+  - data_version: "v0.50.1"
+    config: "exp021_raw_pixels_s2_s1_dem_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "all_steps_of_middle_patch"
+    label: "Raw Pixels (S2+S1+DEM)"
+    color: "#333333"
+
+comp_metrics:
+  - type: knn_purity_comparison
+  - type: knn_purity_per_query_comparison
+
+comp_plots:
+  - type: knn_purity_plot
+    metric: knn_purity_comparison
+  - type: knn_purity_distribution_plot
+    metric: knn_purity_per_query_comparison

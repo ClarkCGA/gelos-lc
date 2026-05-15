@@ -13,6 +13,10 @@ services:
       CHOWN_HOME_OPTS: "-R"
       GRANT_SUDO: "yes"
       PYTHONPATH: /app
+      RAW_PATH: /app/data/raw
+      PROCESSED_PATH: /app/data/processed
+      INTERIM_PATH: /app/data/interim
+      EXTERNAL_PATH: /app/data/external
     working_dir: /app
     ports:
       - "${JUPYTER_HOST_PORT:-8888}:8888"
@@ -58,6 +62,10 @@ services:
       PYTHONPATH: /app
       HOME: /tmp
       TORCHINDUCTOR_CACHE_DIR: /tmp/torch_cache
+      RAW_PATH: /app/data/raw
+      PROCESSED_PATH: /app/data/processed
+      INTERIM_PATH: /app/data/interim
+      EXTERNAL_PATH: /app/data/external
     working_dir: /app
     volumes:
       - "${RAW_PATH}:/app/data/raw/"
