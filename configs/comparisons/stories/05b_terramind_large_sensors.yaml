@@ -13,7 +13,7 @@ experiments:
     config: "exp010_terramind_v1_large"
     strategy: "all_steps_of_middle_patch"
     layer: "layer_23"
-    label: "TM Large | All Sensors"
+    label: "TM Large | S2 + S1 + DEM"
     color: "#c75a00"
   - data_version: "v0.50.1"
     config: "exp014_terramind_v1_large_s2_s1"
@@ -25,7 +25,7 @@ experiments:
     config: "exp012_terramind_v1_large_s2_only"
     strategy: "all_steps_of_middle_patch"
     layer: "layer_23"
-    label: "TM Large | S2 Only"
+    label: "TM Large | S2 (11-band)"
     color: "#ffb380"
 
 comp_metrics:

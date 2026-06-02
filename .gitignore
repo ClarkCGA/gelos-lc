@@ -193,6 +193,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+.claude/
 CLAUDE.md
 .agents/
 gelos/
