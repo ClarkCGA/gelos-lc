@@ -1,6 +1,6 @@
 FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime AS base
 
-ARG GELOS_VERSION=v0.3.6
+ARG GELOS_VERSION=v0.3.7
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
@@ -45,7 +45,7 @@ CMD ["make", "-h"]
 
 FROM quay.io/jupyter/pytorch-notebook:cuda12-python-3.11 AS dev
 
-ARG GELOS_VERSION=v0.3.6
+ARG GELOS_VERSION=v0.3.7
 
 USER root
 

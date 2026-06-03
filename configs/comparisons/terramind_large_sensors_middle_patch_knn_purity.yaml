@@ -53,5 +53,5 @@ comp_metrics:
 comp_plots:
   - type: knn_purity_plot
     metric: knn_purity_comparison
-  - type: knn_purity_distribution_plot
+  - type: knn_purity_violin_distribution_plot
     metric: knn_purity_per_query_comparison
