@@ -54,9 +54,9 @@ docker compose run --rm prod make analysis
     │
     ├── __init__.py             <- Makes this directory Python module
     │
-    ├── pmtiles_generation.py                <- Create PMTiles for Gelos App
+    ├── app_files_generation.py          <- Generate all Gelos App files (json, pmtiles, config.js)
     │
-    ├── pmtiles_upload.py                <- Upload PMTiles for Gelos App
+    ├── app_files_upload.py              <- Upload all Gelos App files to s3://gelos-fm/
 ``` │ 
     └── gelosdataset_lc.py                  <- GELOS LC Dataset module
     --------

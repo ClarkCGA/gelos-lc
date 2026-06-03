@@ -13,6 +13,78 @@ import yaml
 app = typer.Typer()
 
 S3_JSON_BASE_URL = "https://gelos-fm.s3.amazonaws.com/json"
+BASE_DATA_URL = "https://gelos-fm.s3.amazonaws.com/json/points.json"
+DEFAULT_MODEL = "exp001_prithvi300_cls_token_layer_23_tsne"
+DEFAULT_THUMBDATASET = "sentinel_2"
+DEFAULT_MODE = "globe"
+IMAGE_DATASETS = {
+    "sentinel_1": "Sentinel-1",
+    "sentinel_2": "Sentinel-2",
+    "landsat": "Landsat",
+}
+
+
+def strategy_has_tsne(strategy_config: dict) -> bool:
+    """True if the strategy declares a transform of ``type: tsne``."""
+    transforms = strategy_config.get("transforms") or []
+    return any(isinstance(t, dict) and t.get("type") == "tsne" for t in transforms)
+
+
+def render_config_js(model_fields: dict, experiments: dict) -> str:
+    """Render the ``window.MA_CONFIG = {...}`` JS string consumed by gelos-app."""
+    model_lines = []
+    for key, fields in model_fields.items():
+        model_lines.append(f'  "{key}": {{')
+        model_lines.append(f'    path: "{fields["path"]}",')
+        model_lines.append(f'    title: "{fields["title"]}",')
+        model_lines.append(f'    experiment_key: "{fields["experiment_key"]}",')
+        model_lines.append(f'    experiment_title: "{fields["experiment_title"]}",')
+        model_lines.append(f'    strategy_title: "{fields["strategy_title"]}"')
+        model_lines.append("  },")
+    if model_lines:
+        model_lines[-1] = "  }"
+    model_block = "\n".join(model_lines)
+
+    experiment_lines = []
+    for exp_key, exp in experiments.items():
+        keys_js = ", ".join(f'"{k}"' for k in exp["model_keys"])
+        experiment_lines.append(f'  "{exp_key}": {{')
+        experiment_lines.append(f'    title: "{exp["title"]}",')
+        experiment_lines.append(f"    model_keys: [{keys_js}]")
+        experiment_lines.append("  },")
+    if experiment_lines:
+        experiment_lines[-1] = experiment_lines[-1].rstrip(",")
+    experiment_block = "\n".join(experiment_lines)
+
+    image_lines = []
+    for ds_key, label in IMAGE_DATASETS.items():
+        image_lines.append(f"    {ds_key}: {{ label: '{label}' }},")
+    if image_lines:
+        image_lines[-1] = image_lines[-1].rstrip(",")
+    image_block = "\n".join(image_lines)
+
+    return f"""window.MA_CONFIG = {{
+  BASE_DATA_URL: '{BASE_DATA_URL}',
+
+  DEFAULT_MODEL: '{DEFAULT_MODEL}',
+
+  DEFAULT_THUMBDATASET: '{DEFAULT_THUMBDATASET}',
+
+  DEFAULT_MODE: '{DEFAULT_MODE}',
+
+  MODEL_FIELDS: {{
+{model_block}}},
+
+  EXPERIMENTS: {{
+{experiment_block}
+  }},
+
+  IMAGE_DATASETS: {{
+{image_block}
+  }},
+
+}};
+"""
 
 
 @app.command()
@@ -38,6 +110,8 @@ def generate(
     json_dir.mkdir(exist_ok=True, parents=True)
     pmtiles_dir = app_files_dir / "pmtiles"
     pmtiles_dir.mkdir(exist_ok=True, parents=True)
+    config_dir = app_files_dir / "config"
+    config_dir.mkdir(exist_ok=True, parents=True)
 
     # get a list of all embedding csv paths
     embedding_csv_paths = output_dir.rglob("*tsne.csv")
@@ -124,7 +198,7 @@ def generate(
 """
     subprocess.run(cmd, shell=True, check=True)
 
-    # generate models.json from experiment config YAMLs
+    # generate models.json from experiment config YAMLs, checking against local json dir
     models = {}
 
     for config_path in sorted(configs_dir.glob("*.yaml")):
@@ -152,6 +226,45 @@ def generate(
 
     with open(json_dir / "models.json", "w") as f:
         json.dump(models, f, indent=2)
+
+    # generate config.js for gelos-app, checking against local json dir
+    model_fields: dict = {}
+    experiments: dict = {}
+
+    for config_path in sorted(configs_dir.glob("*.yaml")):
+        with open(config_path) as f:
+            config = yaml.safe_load(f)
+
+        strategies = config.get("embedding_extraction_strategies") or {}
+        if not any(strategy_has_tsne(s) for s in strategies.values()):
+            continue
+
+        config_stem = config_path.stem
+        experiment_name = config["experiment_name"]
+
+        for strategy_key, strategy_config in strategies.items():
+            if not strategy_has_tsne(strategy_config):
+                continue
+
+            matches = list(json_dir.glob(f"{config_stem}_{strategy_key}_*.json"))
+            if not matches:
+                continue
+
+            model_key = matches[0].stem
+            model_fields[model_key] = {
+                "path": f"{S3_JSON_BASE_URL}/{model_key}.json",
+                "title": f"{experiment_name}: {strategy_config['title']}",
+                "experiment_key": config_stem,
+                "experiment_title": experiment_name,
+                "strategy_title": strategy_config["title"],
+            }
+
+            if config_stem not in experiments:
+                experiments[config_stem] = {"title": experiment_name, "model_keys": []}
+            experiments[config_stem]["model_keys"].append(model_key)
+
+    (config_dir / "config.js").write_text(render_config_js(model_fields, experiments))
+    typer.echo(f"Wrote {len(model_fields)} models to {config_dir / 'config.js'}")
 
 
 if __name__ == "__main__":

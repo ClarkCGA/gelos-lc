@@ -82,6 +82,22 @@ analysis:
 comparison:
 	python -m gelos.comparison
 
+## Generate all gelos-app files (json, pmtiles, config.js)
+.PHONY: generate-app-files
+generate-app-files:
+	python src/app_files_generation.py \
+		--raw-data-dir $${RAW_PATH:-/app/data/raw} \
+		--processed-data-dir $${PROCESSED_PATH:-/app/data/processed} \
+		--interim-data-dir $${INTERIM_PATH:-/app/data/interim} \
+		--data-version v0.50.1
+
+## Upload all gelos-app files (json, pmtiles, config.js) to s3://gelos-fm/
+.PHONY: upload-app-files
+upload-app-files:
+	python src/app_files_upload.py \
+		--processed-data-dir $${PROCESSED_PATH:-/app/data/processed} \
+		--data-version v0.50.1
+
 ## Set up Python interpreter environment
 .PHONY: create_environment
 create_environment:
