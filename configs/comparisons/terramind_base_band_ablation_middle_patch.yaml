@@ -1,4 +1,4 @@
-comparison_name: "Terramind V1 Base Input Band Ablation @ Middle Patch (4 steps)"
+comparison_name: "Terramind V1 Base Input Band Ablation @ Temporal (4 steps)"
 
 class_labels:
   "1": "Water"

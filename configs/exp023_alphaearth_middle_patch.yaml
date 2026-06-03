@@ -1,4 +1,4 @@
-experiment_name: "AlphaEarth Annual (Middle Patch)"
+experiment_name: "AlphaEarth Annual (Center Patch)"
 data_version: "v0.50.1"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
@@ -26,13 +26,13 @@ cloud_embedding:
   init_args: {}
   extraction_strategies:
     middle_patch:
-      title: "Middle patch (AlphaEarth annual)"
+      title: "Temporal (Center Patch, AlphaEarth Annual)"
       patches: center_1x1
       pool: flatten
 
 embedding_extraction_strategies:
   middle_patch:
-    title: "Middle Patch (AlphaEarth)"
+    title: "Temporal (Center Patch, AlphaEarth)"
     slice_args:
       - {start: 0, stop: null, step: 1}
     metrics:

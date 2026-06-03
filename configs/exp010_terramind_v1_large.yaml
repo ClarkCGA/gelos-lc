@@ -76,7 +76,7 @@ model:
 embedding_extraction_strategies:
   # since terramind embeddings are nested lists, the first args dict gets all time steps, the second gets patch at idx 18 (center)
   all_steps_of_middle_patch:
-    title: "All Steps of Middle Patch"
+    title: "Temporal (Center Patch, All 4 Time Steps)"
     slice_args:
     - start: 0
       stop: null
@@ -112,7 +112,7 @@ embedding_extraction_strategies:
       - type: random_forest
         transform: raw
   all_patches_from_april_to_june:
-    title: "All Patches from April to June"
+    title: "Spatial (All Patches, Single Time Step — Apr–Jun)"
     slice_args:
     - start: 1
       stop: 2
@@ -130,7 +130,7 @@ embedding_extraction_strategies:
         params:
           axis_lim: ~
   four_patches_from_april_to_june:
-    title: "Four Patches from April to June"
+    title: "Spatial (2×2 Center Patches, Single Time Step — Apr–Jun)"
     slice_args:
     - start: 1
       stop: 2

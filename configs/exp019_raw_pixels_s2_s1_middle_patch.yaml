@@ -1,4 +1,4 @@
-experiment_name: "Raw Pixels S2+S1"
+experiment_name: "Raw Pixels (S2+S1)"
 data_version: "v0.50.1"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
@@ -61,7 +61,7 @@ raw_pixel_extraction:
 
 embedding_extraction_strategies:
   all_steps_of_middle_patch:
-    title: "All Steps of Middle Patch (Raw Pixels)"
+    title: "Temporal (Center Patch, All 4 Time Steps) (Raw Pixels)"
     slice_args:
     - start: 0
       stop: null
