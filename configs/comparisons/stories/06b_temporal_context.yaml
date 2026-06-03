@@ -42,5 +42,9 @@ comp_metrics:
 comp_plots:
   - type: knn_purity_plot
     metric: knn_purity_comparison
-  - type: knn_purity_distribution_plot
+  - type: knn_purity_violin_distribution_plot
     metric: knn_purity_per_query_comparison
+    params:
+      split_pairs:
+        - ["Prithvi 600M | 4 Time Steps", "Prithvi 600M | 1 Time Step"]
+        - ["Raw Pixels (S2 6-band) | 4 Time Steps", "Raw Pixels (S2 6-band) | 1 Time Step"]
