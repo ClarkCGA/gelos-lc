@@ -13,19 +13,19 @@ experiments:
     config: "exp001_prithvi300"
     strategy: "all_steps_of_middle_patch"
     layer: "layer_23"
-    label: "Prithvi 300M"
+    label: "Prithvi 300M | S2 (6-band) | Temporal (4 steps)"
     color: "#1f4e8c"
   - data_version: "v0.50.1"
     config: "exp004_prithvi600"
     strategy: "all_steps_of_middle_patch"
     layer: "layer_31"
-    label: "Prithvi 600M"
+    label: "Prithvi 600M | S2 (6-band) | Temporal (4 steps)"
     color: "#00838f"
   - data_version: "v0.50.1"
     config: "exp015_raw_pixels_s2_prithvi_bands_middle_patch"
     strategy: "all_steps_of_middle_patch"
     layer: "all_steps_of_middle_patch"
-    label: "Raw Pixels (S2 6-band)"
+    label: "Raw Pixels | S2 (6-band) | Temporal (4 steps)"
     color: "#cccccc"
 
 comp_metrics:
@@ -35,5 +35,7 @@ comp_metrics:
 comp_plots:
   - type: knn_purity_plot
     metric: knn_purity_comparison
+    params:
+      n_cols: 3
   - type: knn_purity_violin_distribution_plot
     metric: knn_purity_per_query_comparison

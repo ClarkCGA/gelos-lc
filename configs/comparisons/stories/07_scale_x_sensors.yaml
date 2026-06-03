@@ -13,25 +13,25 @@ experiments:
     config: "exp011_terramind_v1_base_s2_only"
     strategy: "all_steps_of_middle_patch"
     layer: "layer_11"
-    label: "TM Base | S2 Only"
+    label: "TM Base | S2 (11-band) | Temporal (4 steps)"
     color: "#e09898"
   - data_version: "v0.50.1"
     config: "exp007_terramind_v1_base"
     strategy: "all_steps_of_middle_patch"
     layer: "layer_11"
-    label: "TM Base | All Sensors"
+    label: "TM Base | S2+S1+DEM | Temporal (4 steps)"
     color: "#8b1a1a"
   - data_version: "v0.50.1"
     config: "exp012_terramind_v1_large_s2_only"
     strategy: "all_steps_of_middle_patch"
     layer: "layer_23"
-    label: "TM Large | S2 Only"
+    label: "TM Large | S2 (11-band) | Temporal (4 steps)"
     color: "#ffb380"
   - data_version: "v0.50.1"
     config: "exp010_terramind_v1_large"
     strategy: "all_steps_of_middle_patch"
     layer: "layer_23"
-    label: "TM Large | All Sensors"
+    label: "TM Large | S2+S1+DEM | Temporal (4 steps)"
     color: "#c75a00"
 
 comp_metrics:
@@ -41,9 +41,11 @@ comp_metrics:
 comp_plots:
   - type: knn_purity_plot
     metric: knn_purity_comparison
+    params:
+      n_cols: 3
   - type: knn_purity_violin_distribution_plot
     metric: knn_purity_per_query_comparison
     params:
       split_pairs:
-        - ["TM Base | S2 Only", "TM Base | All Sensors"]
-        - ["TM Large | S2 Only", "TM Large | All Sensors"]
+        - ["TM Base | S2 (11-band) | Temporal (4 steps)", "TM Base | S2+S1+DEM | Temporal (4 steps)"]
+        - ["TM Large | S2 (11-band) | Temporal (4 steps)", "TM Large | S2+S1+DEM | Temporal (4 steps)"]

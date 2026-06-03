@@ -1,4 +1,4 @@
-comparison_name: "KNN Purity — Story 6: Temporal Context (4 Time Steps vs 1 Time Step)"
+comparison_name: "KNN Purity — Story 6: Temporal Context (Temporal vs Spatial)"
 
 class_labels:
   "1": "Water"
@@ -13,25 +13,25 @@ experiments:
     config: "exp004_prithvi600"
     strategy: "all_steps_of_middle_patch"
     layer: "layer_31"
-    label: "Prithvi 600M | 4 Time Steps"
+    label: "Prithvi 600M | S2 (6-band) | Temporal (4 steps)"
     color: "#00838f"
   - data_version: "v0.50.1"
     config: "exp004_prithvi600"
     strategy: "four_patches_from_april_to_june"
     layer: "layer_31"
-    label: "Prithvi 600M | 1 Time Step"
+    label: "Prithvi 600M | S2 (6-band) | Spatial (1 step)"
     color: "#015a63"
   - data_version: "v0.50.1"
     config: "exp015_raw_pixels_s2_prithvi_bands_middle_patch"
     strategy: "all_steps_of_middle_patch"
     layer: "all_steps_of_middle_patch"
-    label: "Raw Pixels (S2 6-band) | 4 Time Steps"
+    label: "Raw Pixels | S2 (6-band) | Temporal (4 steps)"
     color: "#999999"
   - data_version: "v0.50.1"
     config: "exp016_raw_pixels_s2_prithvi_bands_four_patches"
     strategy: "four_patches_from_april_to_june"
     layer: "four_patches_from_april_to_june"
-    label: "Raw Pixels (S2 6-band) | 1 Time Step"
+    label: "Raw Pixels | S2 (6-band) | Spatial (1 step)"
     color: "#555555"
 
 
@@ -42,9 +42,11 @@ comp_metrics:
 comp_plots:
   - type: knn_purity_plot
     metric: knn_purity_comparison
+    params:
+      n_cols: 3
   - type: knn_purity_violin_distribution_plot
     metric: knn_purity_per_query_comparison
     params:
       split_pairs:
-        - ["Prithvi 600M | 4 Time Steps", "Prithvi 600M | 1 Time Step"]
-        - ["Raw Pixels (S2 6-band) | 4 Time Steps", "Raw Pixels (S2 6-band) | 1 Time Step"]
+        - ["Prithvi 600M | S2 (6-band) | Temporal (4 steps)", "Prithvi 600M | S2 (6-band) | Spatial (1 step)"]
+        - ["Raw Pixels | S2 (6-band) | Temporal (4 steps)", "Raw Pixels | S2 (6-band) | Spatial (1 step)"]

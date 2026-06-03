@@ -1,4 +1,4 @@
-comparison_name: "KNN Purity — Story 6: Temporal Context — Terramind S2+S1 (Middle Patch vs 4 Patches)"
+comparison_name: "KNN Purity — Story 6: Temporal Context — Terramind S2+S1 (Temporal vs Spatial)"
 
 class_labels:
   "1": "Water"
@@ -13,25 +13,25 @@ experiments:
     config: "exp013_terramind_v1_base_s2_s1"
     strategy: "all_steps_of_middle_patch"
     layer: "layer_11"
-    label: "TM Base | S2 + S1 | 4 Time Steps"
+    label: "TM Base | S2+S1 | Temporal (4 steps)"
     color: "#c45a5a"
   - data_version: "v0.50.1"
     config: "exp013_terramind_v1_base_s2_s1"
     strategy: "four_patches_from_april_to_june"
     layer: "layer_11"
-    label: "TM Base | S2 + S1 | 1 Time Step"
+    label: "TM Base | S2+S1 | Spatial (1 step)"
     color: "#8b1a1a"
   - data_version: "v0.50.1"
     config: "exp019_raw_pixels_s2_s1_middle_patch"
     strategy: "all_steps_of_middle_patch"
     layer: "all_steps_of_middle_patch"
-    label: "Raw Pixels (S2 + S1) | 4 Time Steps"
+    label: "Raw Pixels | S2+S1 | Temporal (4 steps)"
     color: "#999999"
   - data_version: "v0.50.1"
     config: "exp020_raw_pixels_s2_s1_four_patches"
     strategy: "four_patches_from_april_to_june"
     layer: "four_patches_from_april_to_june"
-    label: "Raw Pixels (S2 + S1) | 1 Time Step"
+    label: "Raw Pixels | S2+S1 | Spatial (1 step)"
     color: "#555555"
 
 
@@ -42,9 +42,11 @@ comp_metrics:
 comp_plots:
   - type: knn_purity_plot
     metric: knn_purity_comparison
+    params:
+      n_cols: 3
   - type: knn_purity_violin_distribution_plot
     metric: knn_purity_per_query_comparison
     params:
       split_pairs:
-        - ["TM Base | S2 + S1 | 4 Time Steps", "TM Base | S2 + S1 | 1 Time Step"]
-        - ["Raw Pixels (S2 + S1) | 4 Time Steps", "Raw Pixels (S2 + S1) | 1 Time Step"]
+        - ["TM Base | S2+S1 | Temporal (4 steps)", "TM Base | S2+S1 | Spatial (1 step)"]
+        - ["Raw Pixels | S2+S1 | Temporal (4 steps)", "Raw Pixels | S2+S1 | Spatial (1 step)"]

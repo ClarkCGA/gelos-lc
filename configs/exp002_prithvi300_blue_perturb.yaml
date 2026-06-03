@@ -67,7 +67,7 @@ embedding_extraction_strategies:
   all_steps_of_middle_patch:
  # as the first patch is the cls token, we index the middle as 15 rather than 14.
  # this is important for consistency with non-cls token models like terramind.
-    title: "All Steps of Middle Patch"
+    title: "Temporal (Center Patch, All 4 Time Steps)"
     slice_args:
     - start: 15
       stop: null
@@ -75,14 +75,14 @@ embedding_extraction_strategies:
       # in this case, as our inputs are 96x96 and prithvi eo 300m uses 16x16 patches, we have 36 patches per time step.
       step: 36
   all_patches_from_april_to_june:
-    title: "All Patches from April to June"
+    title: "Spatial (All Patches, Single Time Step — Apr–Jun)"
     slice_args:
     - start: 37
       stop: 73
       step: 1
 
   four_patches_from_april_to_june:
-    title: "Four Patches from April to June"
+    title: "Spatial (2×2 Center Patches, Single Time Step — Apr–Jun)"
     slice_args:
     - start: 50
       stop: 54
