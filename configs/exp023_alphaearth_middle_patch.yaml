@@ -2,6 +2,7 @@ experiment_name: "AlphaEarth Annual (Center Patch)"
 data_version: "v0.50.1"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
+null_handling: drop
 
 data:
   class_path: gelos.gelosdatamodule.GELOSDataModule
