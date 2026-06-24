@@ -59,6 +59,13 @@ experiments:
     layer: "layer_23"
     label: "TM Large | S2+S1+DEM | Spatial (1 step)"
 
+  # --- AlphaEarth ---
+  - data_version: "v0.50.1"
+    config: "exp023_alphaearth_middle_patch"
+    strategy: "middle_patch"
+    layer: "middle_patch"
+    label: "AlphaEarth | Annual (Center Patch)"
+
   # --- Sensor ablations ---
   - data_version: "v0.50.1"
     config: "exp011_terramind_v1_base_s2_only"
