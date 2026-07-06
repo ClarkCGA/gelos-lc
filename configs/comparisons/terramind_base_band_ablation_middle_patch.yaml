@@ -39,4 +39,11 @@ comp_plots:
     params:
       control_label: "Control"
       n_cols: 3
-      bins: 50
+      bins: 15
+      x_range: [0.985, 1.0]
+  - type: per_class_ecdf_plot
+    metric: per_chip_similarity_to_control
+    params:
+      control_label: "Control"
+      n_cols: 3
+      x_range: [0.985, 1.0]
