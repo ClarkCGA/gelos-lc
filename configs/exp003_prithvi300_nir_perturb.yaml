@@ -74,14 +74,8 @@ embedding_extraction_strategies:
       # start and step are determined by the patch H and W dimensions determined by the model and the input sizes.
       # in this case, as our inputs are 96x96 and prithvi eo 300m uses 16x16 patches, we have 36 patches per time step.
       step: 36
-  all_patches_from_april_to_june:
-    title: "Spatial (All Patches, Single Time Step — Apr–Jun)"
-    slice_args:
-    - start: 37
-      stop: 73
-      step: 1
   four_patches_from_april_to_june:
-    title: "Spatial (2×2 Center Patches, Single Time Step — Apr–Jun)"
+    title: "Spatial (4 Central Patches, Single Time Step — Apr–Jun)"
     slice_args:
     - start: 50
       stop: 54

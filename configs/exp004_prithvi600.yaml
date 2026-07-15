@@ -122,26 +122,8 @@ embedding_extraction_strategies:
     models:
       - type: random_forest
         transform: raw
-  all_patches_from_april_to_june:
-    title: "Spatial (All Patches, Single Time Step — Apr–Jun)"
-    slice_args:
-    - start: 50
-      stop: 99
-      step: 1
-    transforms:
-      - type: tsne
-      - type: umap
-    plots:
-      - type: scatter_2d
-        transform: tsne
-        params:
-          axis_lim: 160
-      - type: scatter_2d
-        transform: umap
-        params:
-          axis_lim: ~
   four_patches_from_april_to_june:
-    title: "Spatial (2×2 Center Patches, Single Time Step — Apr–Jun)"
+    title: "Spatial (4 Central Patches, Single Time Step — Apr–Jun)"
     slice_args:
     - start: 73
       stop: 77
