@@ -1,0 +1,47 @@
+comparison_name: "KNN Purity — Story 8: Large GFMs vs AlphaEarth & OlmoEarth"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp004_prithvi600"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_31"
+    label: "Prithvi 600M | S2 (6-band) | Temporal (4 steps)"
+    color: "#00838f"
+  - data_version: "v0.50.1"
+    config: "exp014_terramind_v1_large_s2_s1"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "TM Large | S2+S1 | Temporal (4 steps)"
+    color: "#e57e2e"
+  - data_version: "v0.50.1"
+    config: "exp023_alphaearth_middle_patch"
+    strategy: "middle_patch"
+    layer: "middle_patch"
+    label: "AlphaEarth | Annual (Center Patch)"
+    color: "#6a3d9a"
+  - data_version: "v0.50.1"
+    config: "exp027_olmoearth_v1_large_s2_s1"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_0"
+    label: "OlmoEarth Large | S2+S1 | Temporal (4 steps)"
+    color: "#004d40"
+
+comp_metrics:
+  - type: knn_purity_comparison
+  - type: knn_purity_per_query_comparison
+
+comp_plots:
+  - type: knn_purity_plot
+    metric: knn_purity_comparison
+    params:
+      n_cols: 3
+  - type: knn_purity_violin_distribution_plot
+    metric: knn_purity_per_query_comparison

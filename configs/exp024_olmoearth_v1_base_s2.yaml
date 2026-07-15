@@ -1,0 +1,183 @@
+experiment_name: "OlmoEarth V1 Base S2"
+data_version: "v0.50.1"
+chip_tracker: "gelos_chip_tracker.geojson"
+chip_id_column: "id"
+
+seed_everything: 0
+trainer:
+  accelerator: auto
+  strategy: auto
+  devices: auto
+  num_nodes: 1
+  callbacks: []
+  max_epochs: 0
+
+data:
+  class_path: gelos.gelosdatamodule.GELOSDataModule
+  init_args:
+    dataset_class: src.gelosdataset_lc.GELOSLCDataSet
+    batch_size: 1
+    num_workers: 0
+    bands:
+      S2L2A:
+      - COASTAL_AEROSOL
+      - BLUE
+      - GREEN
+      - RED
+      - RED_EDGE_1
+      - RED_EDGE_2
+      - RED_EDGE_3
+      - NIR_BROAD
+      - NIR_NARROW
+      - WATER_VAPOR
+      - SWIR_1
+      - SWIR_2
+    transform:
+      - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
+      - class_path: albumentations.augmentations.geometric.resize.Resize
+        init_args:
+          height: 96
+          width: 96
+          interpolation: 0 # Nearest Neighbor
+      - class_path: albumentations.pytorch.transforms.ToTensorV2
+      - class_path: terratorch.datasets.transforms.UnflattenTemporalFromChannels
+        init_args:
+          n_timesteps: 4
+
+model:
+  class_path: terratorch.tasks.EmbeddingGenerationTask
+  title: OlmoEarth V1 Base S2
+  init_args:
+    model: olmoearth_v1_base
+    model_args:
+      model_id: allenai/OlmoEarth-v1-Base
+      pretrained: True
+      patch_size: 4
+      # keep: return per-timestep tokens (time-major) instead of the temporal
+      # mean, so extraction strategies can slice 1 vs 4 timesteps (see below).
+      temporal_pooling: keep
+      # Average 4x4 token neighborhoods after encoding: the native 24x24 grid of
+      # 4x4-pixel tokens becomes a 6x6 grid of 16x16-pixel tokens, matching the
+      # patch footprint and token indices of Prithvi/TerraMind on 96x96 inputs.
+      spatial_pooling: 4
+      bands:
+        - COASTAL_AEROSOL
+        - BLUE
+        - GREEN
+        - RED
+        - RED_EDGE_1
+        - RED_EDGE_2
+        - RED_EDGE_3
+        - NIR_BROAD
+        - NIR_NARROW
+        - WATER_VAPOR
+        - SWIR_1
+        - SWIR_2
+    output_format: parquet
+    embed_file_key: filename
+    layers: [-1]
+    embedding_pooling: null
+    has_cls: False
+    temporal_cfg:
+      # temporal_wrapper MUST be False: TemporalWrapper produces 4D input but
+      # OlmoEarthBackbone.forward_features requires 5D (B, C, T, H, W) — OlmoEarth
+      # consumes the time axis natively (joint space-time attention).
+      # Temporal handling is instead controlled by model_args.temporal_pooling.
+      temporal_wrapper: False
+      temporal_pooling: keep
+
+# With model_args temporal_pooling: keep + spatial_pooling: 4, OlmoEarthBackbone
+# returns per-timestep tokens on a pooled 6x6 grid, flattened time-major:
+# (B, T*36, D) = (B, 144, 768). Each token covers 16x16 pixels, so the grid and
+# token indices match Prithvi/TerraMind on 96x96 inputs: token index =
+# t*36 + row*6 + col, center patch = 2*6 + 2 = 14 within each timestep block.
+# Strategies below mirror exp013 (TerraMind S2+S1) for cross-model comparison.
+# NOTE: a single timestep's tokens still come from one joint space-time attention
+# pass over all 4 timesteps, so single- vs all-timestep strategies isolate the
+# token count fed to metrics/models, not the model's access to temporal context
+# (same caveat applies to the Prithvi/TerraMind configs).
+embedding_extraction_strategies:
+  # Center patch at each of the 4 timesteps: tokens 14, 50, 86, 122 -> 4*768
+  # dims/chip. Tests whether multi-temporal tokens improve class separability.
+  all_steps_of_middle_patch:
+    title: "Temporal (Center Patch, All 4 Time Steps)"
+    slice_args:
+      - start: 14
+        stop: null
+        step: 36
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+      - type: pca_ablation
+        params:
+          variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+      - type: knn_purity
+        params:
+          k_values: [1, 2, 5, 10, 20, 50]
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+      - type: temporal_cosine_similarity
+        transform: raw
+        params:
+          n_timesteps: 4
+          timestep_labels: ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"]
+    models:
+      - type: random_forest
+        transform: raw
+  # All 36 patches of a single timestep (t=1, Apr-Jun): tokens 36-71.
+  # Central 4 patches of a single timestep (t=1, Apr-Jun): within-timestep
+  # patches 13-16 -> tokens 49-52, mirroring exp013 -> 4*768 dims/chip, the
+  # single-timestep counterpart to all_steps_of_middle_patch at equal dims.
+  four_patches_from_april_to_june:
+    title: "Spatial (4 Central Patches, Single Time Step — Apr–Jun)"
+    slice_args:
+      - start: 49
+        stop: 53
+        step: 1
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+      - type: pca_ablation
+        params:
+          variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+      - type: knn_purity
+        params:
+          k_values: [1, 2, 5, 10, 20, 50]
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+    models:
+      - type: random_forest
+        transform: raw
+
+style:
+  category_column: "lulc"
+  colors:
+    "1": "#419bdf"    # Water
+    "2": "#397d49"    # Trees
+    "5": "#e49635"    # Crops
+    "7": "#c4281b"    # Built Area
+    "8": "#a59b8f"    # Bare Ground
+    "11": "#e3e2c3"   # Rangeland
+  labels:
+    "1": "Water"
+    "2": "Trees"
+    "5": "Crops"
+    "7": "Built Area"
+    "8": "Bare Ground"
+    "11": "Rangeland"

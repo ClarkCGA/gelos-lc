@@ -1,0 +1,47 @@
+comparison_name: "KNN Purity — Story 12: OlmoEarth Base vs Large (S2-only & S2+S1)"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp024_olmoearth_v1_base_s2"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_0"
+    label: "OlmoEarth Base | S2 (12-band) | Temporal (4 steps)"
+    color: "#7cb342"
+  - data_version: "v0.50.1"
+    config: "exp026_olmoearth_v1_large_s2"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_0"
+    label: "OlmoEarth Large | S2 (12-band) | Temporal (4 steps)"
+    color: "#f9a825"
+  - data_version: "v0.50.1"
+    config: "exp025_olmoearth_v1_base_s2_s1"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_0"
+    label: "OlmoEarth Base | S2+S1 | Temporal (4 steps)"
+    color: "#2e7d32"
+  - data_version: "v0.50.1"
+    config: "exp027_olmoearth_v1_large_s2_s1"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_0"
+    label: "OlmoEarth Large | S2+S1 | Temporal (4 steps)"
+    color: "#004d40"
+
+comp_metrics:
+  - type: knn_purity_comparison
+  - type: knn_purity_per_query_comparison
+
+comp_plots:
+  - type: knn_purity_plot
+    metric: knn_purity_comparison
+    params:
+      n_cols: 3
+  - type: knn_purity_violin_distribution_plot
+    metric: knn_purity_per_query_comparison
