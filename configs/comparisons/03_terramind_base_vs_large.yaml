@@ -22,10 +22,10 @@ experiments:
     label: "TM Large | S2+S1+DEM | Temporal (4 steps)"
     color: "#c75a00"
   - data_version: "v0.50.1"
-    config: "exp021_raw_pixels_s2_s1_dem_middle_patch"
+    config: "exp021_spectral_bands_s2_s1_dem_middle_patch"
     strategy: "all_steps_of_middle_patch"
     layer: "all_steps_of_middle_patch"
-    label: "Raw Pixels | S2+S1+DEM | Temporal (4 steps)"
+    label: "Spectral Bands | S2+S1+DEM | Temporal (4 steps)"
     color: "#333333"
 
 comp_metrics:

@@ -22,16 +22,16 @@ experiments:
     label: "TM Base | S2+S1 | Spatial (1 step)"
     color: "#8b1a1a"
   - data_version: "v0.50.1"
-    config: "exp019_raw_pixels_s2_s1_middle_patch"
+    config: "exp019_spectral_bands_s2_s1_middle_patch"
     strategy: "all_steps_of_middle_patch"
     layer: "all_steps_of_middle_patch"
-    label: "Raw Pixels | S2+S1 | Temporal (4 steps)"
+    label: "Spectral Bands | S2+S1 | Temporal (4 steps)"
     color: "#999999"
   - data_version: "v0.50.1"
-    config: "exp020_raw_pixels_s2_s1_four_patches"
+    config: "exp020_spectral_bands_s2_s1_four_patches"
     strategy: "four_patches_from_april_to_june"
     layer: "four_patches_from_april_to_june"
-    label: "Raw Pixels | S2+S1 | Spatial (1 step)"
+    label: "Spectral Bands | S2+S1 | Spatial (1 step)"
     color: "#555555"
 
 
@@ -49,4 +49,4 @@ comp_plots:
     params:
       split_pairs:
         - ["TM Base | S2+S1 | Temporal (4 steps)", "TM Base | S2+S1 | Spatial (1 step)"]
-        - ["Raw Pixels | S2+S1 | Temporal (4 steps)", "Raw Pixels | S2+S1 | Spatial (1 step)"]
+        - ["Spectral Bands | S2+S1 | Temporal (4 steps)", "Spectral Bands | S2+S1 | Spatial (1 step)"]
