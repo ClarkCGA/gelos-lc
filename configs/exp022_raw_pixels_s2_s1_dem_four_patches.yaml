@@ -89,6 +89,9 @@ embedding_extraction_strategies:
         transform: umap
         params:
           axis_lim: ~
+    models:
+      - type: random_forest
+        transform: raw
 
 style:
   category_column: "lulc"
