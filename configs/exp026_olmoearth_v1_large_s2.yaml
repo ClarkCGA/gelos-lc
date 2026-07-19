@@ -16,8 +16,8 @@ data:
   class_path: gelos.gelosdatamodule.GELOSDataModule
   init_args:
     dataset_class: src.gelosdataset_lc.GELOSLCDataSet
-    batch_size: 1
-    num_workers: 0
+    batch_size: 8
+    num_workers: 4
     bands:
       S2L2A:
       - COASTAL_AEROSOL
