@@ -1,4 +1,4 @@
-experiment_name: "Raw Pixels (S2 12-band)"
+experiment_name: "Spectral Bands (S2 12-band)"
 data_version: "v0.50.1"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
@@ -45,20 +45,20 @@ data:
           n_timesteps: 4
 
 model:
-  class_path: gelos.raw_pixels.RawPixelEmbeddingTask
-  title: "Raw Pixels (S2 12-band)"
+  class_path: gelos.spectral_bands.SpectralBandsEmbeddingTask
+  title: "Spectral Bands (S2 12-band)"
   init_args:
     patch_size: 16
     embed_file_key: filename
 
-raw_pixel_extraction:
+spectral_band_extraction:
   all_steps_of_middle_patch:
     patches: center_1x1
     timesteps: all
 
 embedding_extraction_strategies:
   all_steps_of_middle_patch:
-    title: "Temporal (Center Patch, All 4 Time Steps) (Raw Pixels)"
+    title: "Temporal (Center Patch, All 4 Time Steps) (Spectral Bands)"
     slice_args:
     - start: 0
       stop: null
