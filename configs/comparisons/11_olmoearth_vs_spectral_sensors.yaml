@@ -1,4 +1,4 @@
-comparison_name: "KNN Purity — Story 11: OlmoEarth vs Raw Pixels (S2-only & S2+S1)"
+comparison_name: "KNN Purity — Story 11: OlmoEarth vs Spectral Bands (S2-only & S2+S1)"
 
 class_labels:
   "1": "Water"
@@ -22,16 +22,16 @@ experiments:
     label: "OlmoEarth Base | S2+S1 | Temporal (4 steps)"
     color: "#2e7d32"
   - data_version: "v0.50.1"
-    config: "exp017_raw_pixels_s2_full_middle_patch"
+    config: "exp017_spectral_bands_s2_full_middle_patch"
     strategy: "all_steps_of_middle_patch"
     layer: "all_steps_of_middle_patch"
-    label: "Raw Pixels | S2 (12-band) | Temporal (4 steps)"
+    label: "Spectral Bands | S2 (12-band) | Temporal (4 steps)"
     color: "#cccccc"
   - data_version: "v0.50.1"
-    config: "exp019_raw_pixels_s2_s1_middle_patch"
+    config: "exp019_spectral_bands_s2_s1_middle_patch"
     strategy: "all_steps_of_middle_patch"
     layer: "all_steps_of_middle_patch"
-    label: "Raw Pixels | S2+S1 | Temporal (4 steps)"
+    label: "Spectral Bands | S2+S1 | Temporal (4 steps)"
     color: "#333333"
 
 comp_metrics:
