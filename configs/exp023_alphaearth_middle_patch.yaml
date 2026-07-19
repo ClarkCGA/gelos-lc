@@ -54,7 +54,10 @@ embedding_extraction_strategies:
       - type: scatter_2d
         transform: umap
         params:
-          axis_lim: 
+          axis_lim:
+    models:
+      - type: random_forest
+        transform: raw
 
 style:
   category_column: "lulc"
