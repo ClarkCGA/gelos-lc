@@ -18,6 +18,7 @@ def make_dataloader(
     data_root: Path,
     batch_size: int = 8,
     num_workers: int = 16,
+    db_scale_bands: dict | None = None,
 ):
     no_norm_means = {
         sensor: {band: 0 for band in bands}
@@ -28,6 +29,9 @@ def make_dataloader(
         for sensor, bands in GELOSLCDataSet.all_band_names.items()
     }
 
+    # Pass db_scale_bands through only when requested, so older gelos versions
+    # without the parameter keep working.
+    extra_kwargs = {"db_scale_bands": db_scale_bands} if db_scale_bands else {}
     datamodule = GELOSDataModule(
         data_root=data_root,
         dataset_class=GELOSLCDataSet,
@@ -35,6 +39,7 @@ def make_dataloader(
         num_workers=num_workers,
         means=no_norm_means,
         stds=no_norm_stds,
+        **extra_kwargs,
     )
     datamodule.setup("predict")
     loader = datamodule.predict_dataloader()
@@ -110,6 +115,12 @@ def main(
     num_workers: int = typer.Option(
         16, "--num-workers", "-n", help="Number of dataloader workers."
     ),
+    db_scale_bands: str = typer.Option(
+        None,
+        "--db-scale-bands",
+        help="JSON dict of bands to convert to dB before computing statistics, "
+        'e.g. \'{"S1RTC": ["VV", "VH"]}\'.',
+    ),
 ):
     """Compute per-band means and standard deviations across the full GELOSLCDataSet."""
     data_root = data_dir / data_version
@@ -119,7 +130,8 @@ def main(
     logger.info(f"Data root: {data_root}")
     logger.info(f"Output path: {output_path}")
 
-    loader, dataset = make_dataloader(data_root, batch_size, num_workers)
+    db_scale_bands_dict = json.loads(db_scale_bands) if db_scale_bands else None
+    loader, dataset = make_dataloader(data_root, batch_size, num_workers, db_scale_bands_dict)
     logger.info(f"Dataset modalities: {list(dataset.bands.keys())}")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

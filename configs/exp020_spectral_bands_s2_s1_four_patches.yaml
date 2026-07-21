@@ -18,6 +18,9 @@ data:
     dataset_class: src.gelosdataset_lc.GELOSLCDataSet
     batch_size: 1
     num_workers: 0
+    # Raw-pixel baseline: embeddings are the spectral band values themselves,
+    # so pass them through unnormalized.
+    normalize: false
     bands:
       S2L2A:
       - COASTAL_AEROSOL
