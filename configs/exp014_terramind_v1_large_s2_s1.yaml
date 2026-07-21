@@ -18,21 +18,10 @@ data:
     dataset_class: src.gelosdataset_lc.GELOSLCDataSet
     batch_size: 1
     num_workers: 0
-    # TerraMind was pretrained on dB-scale S1 RTC and the terratorch encoder
-    # does not normalize internally, so convert linear-power gamma0 to dB at
-    # load time and z-score S1 with TerraMind's v1 pretraining stats (terratorch
-    # terramind_register.py: v1_pretraining_mean/std["untok_sen1rtc@224"]).
-    # S2L2A is intentionally omitted so it falls back to dataset-class stats.
-    db_scale_bands:
-      S1RTC: [VV, VH]
-    means:
-      S1RTC:
-        VV: -10.93
-        VH: -17.329
-    stds:
-      S1RTC:
-        VV: 4.391
-        VH: 4.459
+    # Normalization is injected by gelos.generation from TerraMind's own
+    # pretraining stats (gelos.normalization): S2 and S1 means/stds, plus
+    # db_scale_bands for S1 since TerraMind's S1 stats are in dB while the
+    # chips are linear power. Set means/stds/db_scale_bands here to override.
     bands:
       S2L2A:
       - COASTAL_AEROSOL
