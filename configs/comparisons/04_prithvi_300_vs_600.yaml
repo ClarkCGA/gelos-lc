@@ -22,10 +22,10 @@ experiments:
     label: "Prithvi 600M | S2 (6-band) | Temporal (4 steps)"
     color: "#00838f"
   - data_version: "v0.50.1"
-    config: "exp015_raw_pixels_s2_prithvi_bands_middle_patch"
+    config: "exp015_spectral_bands_s2_prithvi_bands_middle_patch"
     strategy: "all_steps_of_middle_patch"
     layer: "all_steps_of_middle_patch"
-    label: "Raw Pixels | S2 (6-band) | Temporal (4 steps)"
+    label: "Spectral Bands | S2 (6-band) | Temporal (4 steps)"
     color: "#999999"
 
 comp_metrics:

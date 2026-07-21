@@ -1,4 +1,4 @@
-experiment_name: "Raw Pixels (S2 12-band)"
+experiment_name: "Spectral Bands (S2+S1)"
 data_version: "v0.50.1"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
@@ -32,6 +32,9 @@ data:
       - WATER_VAPOR
       - SWIR_1
       - SWIR_2
+      S1RTC:
+      - VV
+      - VH
     transform:
       - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
       - class_path: albumentations.augmentations.geometric.resize.Resize
@@ -45,20 +48,20 @@ data:
           n_timesteps: 4
 
 model:
-  class_path: gelos.raw_pixels.RawPixelEmbeddingTask
-  title: "Raw Pixels (S2 12-band)"
+  class_path: gelos.spectral_bands.SpectralBandsEmbeddingTask
+  title: "Spectral Bands (S2+S1)"
   init_args:
     patch_size: 16
     embed_file_key: filename
 
-raw_pixel_extraction:
+spectral_band_extraction:
   four_patches_from_april_to_june:
-    patches: center_2x2
+    patches: center_1x4
     timesteps: [1]
 
 embedding_extraction_strategies:
   four_patches_from_april_to_june:
-    title: "Spatial (4 Central Patches, Single Time Step — Apr–Jun) (Raw Pixels)"
+    title: "Spatial (4 Central Patches, Single Time Step — Apr–Jun) (Spectral Bands)"
     slice_args:
     - start: 0
       stop: null
