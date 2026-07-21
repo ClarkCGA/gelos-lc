@@ -16,8 +16,8 @@ data:
   class_path: gelos.gelosdatamodule.GELOSDataModule
   init_args:
     dataset_class: src.gelosdataset_lc.GELOSLCDataSet
-    batch_size: 8
-    num_workers: 4
+    batch_size: 1
+    num_workers: 0
     # The gelos OlmoEarth backbone applies OlmoEarth's exact pretraining
     # normalization internally (S1: dB conversion + mean±2σ min-max,
     # S2: mean±2σ min-max on raw DN), so the datamodule must pass raw values
