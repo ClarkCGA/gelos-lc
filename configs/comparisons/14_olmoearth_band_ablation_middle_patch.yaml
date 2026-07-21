@@ -1,0 +1,49 @@
+comparison_name: "OlmoEarth V1 Base Input Band Ablation @ Temporal (4 steps)"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp024_olmoearth_v1_base_s2"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_0"
+    label: "Control"
+  - data_version: "v0.50.1"
+    config: "exp028_olmoearth_v1_base_s2_blue_perturb"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_0"
+    label: "S2L2A Blue +10% noise"
+  - data_version: "v0.50.1"
+    config: "exp029_olmoearth_v1_base_s2_nir_perturb"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_0"
+    label: "S2L2A NIR Narrow +10% noise"
+
+comp_metrics:
+  - type: per_chip_similarity_to_control
+    params:
+      control_label: "Control"
+      chip_tracker_path: "/app/data/raw/v0.50.1/gelos_chip_tracker.geojson"
+      chip_id_column: "id"
+      category_column: "lulc"
+
+comp_plots:
+  - type: per_class_similarity_distribution_plot
+    metric: per_chip_similarity_to_control
+    params:
+      control_label: "Control"
+      n_cols: 3
+      bins: 15
+      x_range: [0.985, 1.0]
+  - type: per_class_ecdf_plot
+    metric: per_chip_similarity_to_control
+    params:
+      control_label: "Control"
+      n_cols: 3
+      x_range: [0.985, 1.0]
