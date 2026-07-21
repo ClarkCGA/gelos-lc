@@ -18,6 +18,11 @@ data:
     dataset_class: src.gelosdataset_lc.GELOSLCDataSet
     batch_size: 8
     num_workers: 4
+    # The gelos OlmoEarth backbone applies OlmoEarth's exact pretraining
+    # normalization internally (S1: dB conversion + mean±2σ min-max,
+    # S2: mean±2σ min-max on raw DN), so the datamodule must pass raw values
+    # straight through: no z-score normalization and no db_scale_bands here.
+    normalize: false
     bands:
       S2L2A:
       - COASTAL_AEROSOL
@@ -76,9 +81,10 @@ model:
         - WATER_VAPOR
         - SWIR_1
         - SWIR_2
-      # NOTE: S1 data must be in decibel scale.
-      # OlmoEarth was pretrained on S1 dB values (VV mean≈-11.6 dB, VH mean≈-17.7 dB).
-      # Linear-power S1 inputs will produce incorrect embeddings without raising an error.
+      # NOTE: the gelos OlmoEarth backbone applies OlmoEarth's exact pretraining
+      # S1 transform internally (linear power -> dB, then mean±2σ min-max), so
+      # it must receive RAW linear-power S1 from the datamodule: normalize is
+      # false above and db_scale_bands must not be set in this config.
       bands_s1:
         - VV
         - VH

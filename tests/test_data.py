@@ -119,3 +119,37 @@ def test_single_sensor(dummy_gelos_data):
 
     gc.collect()
 
+
+def test_lowercase_stat_aliases():
+    """GELOSDataModule resolves stats via lowercase class attributes; the
+    aliases must exist and be identical to the primary uppercase dicts."""
+    from src.gelosdataset_lc import GELOSLCDataSet
+
+    assert GELOSLCDataSet.means is GELOSLCDataSet.MEANS
+    assert GELOSLCDataSet.stds is GELOSLCDataSet.STDS
+
+
+def test_datamodule_resolves_dataset_stats(dummy_gelos_data):
+    """Instantiating the datamodule with GELOSLCDataSet must pick up the
+    dataset-class statistics instead of the 0/1 identity defaults."""
+    from gelos.gelosdatamodule import GELOSDataModule
+    from src.gelosdataset_lc import GELOSLCDataSet
+
+    datamodule = GELOSDataModule(
+        data_root=Path(dummy_gelos_data),
+        dataset_class=GELOSLCDataSet,
+        batch_size=1,
+        num_workers=0,
+    )
+
+    for modality, band_means in datamodule.means.items():
+        assert any(
+            float(mean) != 0.0 for mean in band_means
+        ), f"{modality} means are all identity defaults — stats were not resolved"
+    for modality, band_stds in datamodule.stds.items():
+        assert any(
+            float(std) != 1.0 for std in band_stds
+        ), f"{modality} stds are all identity defaults — stats were not resolved"
+
+    gc.collect()
+

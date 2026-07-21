@@ -18,6 +18,10 @@ data:
     dataset_class: src.gelosdataset_lc.GELOSLCDataSet
     batch_size: 1
     num_workers: 0
+    # Normalization is injected by gelos.generation from TerraMind's own
+    # pretraining stats (gelos.normalization): S2 and S1 means/stds, plus
+    # db_scale_bands for S1 since TerraMind's S1 stats are in dB while the
+    # chips are linear power. Set means/stds/db_scale_bands here to override.
     bands:
       S2L2A:
       - COASTAL_AEROSOL

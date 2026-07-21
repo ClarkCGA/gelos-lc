@@ -92,6 +92,13 @@ class GELOSLCDataSet(GELOSDataSet):
         "DEM": {"DEM": 703.6107177734375},
     }
 
+    # Lowercase aliases: gelos' GELOSDataModule resolves normalization statistics
+    # from `means`/`stds` class attributes. Kept alongside the primary uppercase
+    # names so normalization works even with older gelos versions that only look
+    # up the lowercase attributes.
+    means = MEANS
+    stds = STDS
+
     S2RTC_BAND_NAMES = [
         "COASTAL_AEROSOL",
         "BLUE",
@@ -142,6 +149,7 @@ class GELOSLCDataSet(GELOSDataSet):
         concat_bands: bool = False,
         repeat_bands: dict[str, int] | None = None,
         perturb_bands: dict[str, List[str]] | None = None,
+        db_scale_bands: dict[str, List[str]] | None = None,
     ) -> None:
         """
         Initializes an instance of GELOSLCDataSet.
@@ -155,6 +163,7 @@ class GELOSLCDataSet(GELOSDataSet):
         concat_bands (bool, optional): concatenate all modalities into the channel dimension
         repeat_bands (dict[str, int], optional): repeat bands when loading from disc, intended to repeat single time step modalities e.g. DEM
         perturb_bands (dict[str, List[str]], optional): perturb bands with additive gaussian noise. Dictionary defining modalities and bands for perturbation.
+        db_scale_bands (dict[str, List[str]], optional): convert bands to dB (10*log10) at load time, e.g. {"S1RTC": ["VV", "VH"]}
         """
 
         super().__init__(
@@ -164,6 +173,7 @@ class GELOSLCDataSet(GELOSDataSet):
             concat_bands=concat_bands,
             repeat_bands=repeat_bands,
             perturb_bands=perturb_bands,
+            db_scale_bands=db_scale_bands,
         )
 
         self.data_root = Path(data_root)
