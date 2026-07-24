@@ -24,6 +24,10 @@
 #
 # Usage:
 #   scripts/run_pipeline.sh [CONFIG_DIR_OR_GLOB]   # default: configs/
+#   scripts/run_pipeline.sh NUM [NUM ...]          # bare experiment numbers:
+#                                                  # e.g. "30 31" runs
+#                                                  # configs/exp030_*.yaml and
+#                                                  # configs/exp031_*.yaml
 #
 # Environment overrides:
 #   SERVICE    compose service to run steps in (default: dev). SERVICE=prod
@@ -52,7 +56,38 @@ if ! [[ "$per_gpu" =~ ^[1-9][0-9]*$ ]]; then
   exit 1
 fi
 
-if [ -d "$configs_arg" ]; then
+# bare 1-3 digit argument (whitespace-trimmed); the digits land in
+# BASH_REMATCH[1]
+is_exp_number() {
+  [[ "$1" =~ ^[[:space:]]*([0-9]{1,3})[[:space:]]*$ ]]
+}
+
+# experiment-number mode only when EVERY positional argument is a bare
+# number; any non-number falls back to the dir-or-glob path on $1 alone
+exp_number_mode=$(($# > 0))
+for arg in "$@"; do
+  is_exp_number "$arg" || { exp_number_mode=0; break; }
+done
+
+if [ "$exp_number_mode" -eq 1 ]; then
+  configs=()
+  for arg in "$@"; do
+    is_exp_number "$arg"
+    padded=$(printf '%03d' "$((10#${BASH_REMATCH[1]}))")
+    matches=(configs/exp"$padded"_*.yaml)
+    if [ ! -e "${matches[0]}" ]; then
+      echo "no config found for experiment $padded (looked for configs/exp${padded}_*.yaml)" >&2
+      exit 1
+    fi
+    if [ ${#matches[@]} -gt 1 ]; then
+      echo "multiple configs found for experiment $padded: ${matches[*]}" >&2
+      exit 1
+    fi
+    configs+=("${matches[0]}")
+  done
+  # match the sorted order of the dir/glob paths regardless of argument order
+  mapfile -t configs < <(printf '%s\n' "${configs[@]}" | sort)
+elif [ -d "$configs_arg" ]; then
   mapfile -t configs < <(ls "$configs_arg"/*.yaml 2>/dev/null | sort)
 else
   # shellcheck disable=SC2086 # intentional glob expansion of the argument
