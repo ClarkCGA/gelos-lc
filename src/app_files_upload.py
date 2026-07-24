@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import os
 from pathlib import Path
 
 import boto3
-from gelos.config import AWS_ACCESS_KEY, AWS_REGION, AWS_SECRET_KEY
+from dotenv import load_dotenv
 import typer
+
+load_dotenv()
 
 app = typer.Typer()
 
@@ -18,11 +21,13 @@ def upload(
     data_version: str = typer.Option("v0.50.1", help="Data version string"),
     bucket: str = typer.Option("gelos-fm", help="Target S3 bucket name"),
 ):
+    # Unset values pass None, letting boto3 fall back to its default
+    # credential chain (~/.aws/credentials, instance profile, etc.)
     s3_client = boto3.client(
         "s3",
-        aws_access_key_id=AWS_ACCESS_KEY,
-        aws_secret_access_key=AWS_SECRET_KEY,
-        region_name=AWS_REGION,
+        aws_access_key_id=os.getenv("AWS_ACCESS_KEY"),
+        aws_secret_access_key=os.getenv("AWS_SECRET_KEY"),
+        region_name=os.getenv("AWS_REGION"),
     )
 
     app_files_dir = processed_data_dir / data_version / "app_files"

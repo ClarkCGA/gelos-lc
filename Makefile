@@ -6,6 +6,13 @@ PROJECT_NAME = gelos-lc
 PYTHON_VERSION = 3.10
 PYTHON_INTERPRETER = python
 
+# Load data-path variables from .env (also read by docker compose) so targets
+# like generate-app-files/upload-app-files work outside Docker. .env values
+# override shell-exported variables; to override per-invocation, pass the
+# variable on the make command line: make upload-app-files PROCESSED_PATH=...
+-include .env
+export RAW_PATH PROCESSED_PATH INTERIM_PATH EXTERNAL_PATH
+
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################

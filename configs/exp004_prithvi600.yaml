@@ -84,6 +84,9 @@ embedding_extraction_strategies:
         transform: umap
         params:
           axis_lim: ~
+    models:
+      - type: random_forest
+        transform: raw
   all_steps_of_middle_patch:
  # as the first patch is the cls token, we index the middle as 25 rather than 24.
  # this is important for consistency with non-cls token models like terramind.

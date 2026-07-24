@@ -30,7 +30,9 @@ RUN git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe && \
 WORKDIR /app
 ENV PYTHONPATH=/app
 
-RUN uv pip install --system --no-cache awscli boto3 mkdocs ruff pytest
+# --upgrade so a boto3 baked into the base image can't stay behind the exact
+# botocore that awscli pins, which breaks boto3's import
+RUN uv pip install --system --no-cache --upgrade awscli boto3 mkdocs ruff pytest
 RUN uv pip install --system --no-cache \
     "gelos[alphaearth] @ git+https://github.com/ClarkCGA/gelos.git@${GELOS_VERSION}"
 
@@ -75,7 +77,9 @@ RUN git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe && \
 
 WORKDIR /app
 
-RUN uv pip install --system --no-cache awscli boto3 mkdocs ruff pytest
+# --upgrade so a boto3 baked into the base image can't stay behind the exact
+# botocore that awscli pins, which breaks boto3's import
+RUN uv pip install --system --no-cache --upgrade awscli boto3 mkdocs ruff pytest
 
 # The jupyter base ships torch 2.5/cu121, but olmoearth-pretrain (a gelos core
 # dependency) requires torch>=2.7,<2.8. Bake the matched torch/torchvision
