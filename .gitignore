@@ -1,13 +1,4 @@
-# Data
-/data/
-
-# Lightning Logs
-**/lightning_logs/
-
-# Mac OS-specific storage files
-.DS_Store
-
-# vim
+# Data /data/ # Lightning Logs **/lightning_logs/ # Mac OS-specific storage files .DS_Store # vim
 *.swp
 *.swo
 
@@ -199,4 +190,3 @@ CLAUDE.md
 gelos/
 compose.override.yml
 .pptx
-reports/
