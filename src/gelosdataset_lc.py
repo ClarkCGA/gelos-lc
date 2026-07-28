@@ -150,6 +150,7 @@ class GELOSLCDataSet(GELOSDataSet):
         repeat_bands: dict[str, int] | None = None,
         perturb_bands: dict[str, List[str]] | None = None,
         db_scale_bands: dict[str, List[str]] | None = None,
+        clip_range_bands: dict[str, dict[str, List[float]]] | None = None,
     ) -> None:
         """
         Initializes an instance of GELOSLCDataSet.
@@ -164,6 +165,7 @@ class GELOSLCDataSet(GELOSDataSet):
         repeat_bands (dict[str, int], optional): repeat bands when loading from disc, intended to repeat single time step modalities e.g. DEM
         perturb_bands (dict[str, List[str]], optional): perturb bands with additive gaussian noise. Dictionary defining modalities and bands for perturbation.
         db_scale_bands (dict[str, List[str]], optional): convert bands to dB (10*log10) at load time, e.g. {"S1RTC": ["VV", "VH"]}
+        clip_range_bands (dict[str, dict[str, List[float]]], optional): clip bands to a fixed [min, max] value range at load time, e.g. {"S2L2A": {"RED": [0.0, 2500.0]}}
         """
 
         super().__init__(
@@ -174,6 +176,7 @@ class GELOSLCDataSet(GELOSDataSet):
             repeat_bands=repeat_bands,
             perturb_bands=perturb_bands,
             db_scale_bands=db_scale_bands,
+            clip_range_bands=clip_range_bands,
         )
 
         self.data_root = Path(data_root)
