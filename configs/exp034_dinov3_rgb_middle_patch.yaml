@@ -1,0 +1,150 @@
+experiment_name: "DINOv3 ViT-B/16 (RGB)"
+data_version: "v0.50.1"
+chip_tracker: "gelos_chip_tracker.geojson"
+chip_id_column: "id"
+
+seed_everything: 0
+trainer:
+  accelerator: auto
+  strategy: auto
+  devices: auto
+  num_nodes: 1
+  callbacks: []
+  max_epochs: 0
+
+data:
+  class_path: gelos.gelosdatamodule.GELOSDataModule
+  init_args:
+    dataset_class: src.gelosdataset_lc.GELOSLCDataSet
+    batch_size: 1
+    num_workers: 0
+    bands:
+      S2L2A: # RED, GREEN, BLUE order — DINOv3's patch embed expects RGB channel order
+      - RED
+      - GREEN
+      - BLUE
+    transform:
+      - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
+      - class_path: albumentations.augmentations.geometric.resize.Resize
+        init_args:
+          height: 224
+          width: 224
+          interpolation: 1 # Bilinear (RGB into a natural-image model)
+      - class_path: albumentations.pytorch.transforms.ToTensorV2
+      - class_path: terratorch.datasets.transforms.UnflattenTemporalFromChannels
+        init_args:
+          n_timesteps: 4
+
+model:
+  class_path: terratorch.tasks.EmbeddingGenerationTask
+  title: "DINOv3 ViT-B/16 (RGB)"
+  init_args:
+    # Registered by gelos.backbones.dinov3_backbone (companion gelos repo);
+    # auto-downloads pretrained weights at first run; no ckpt_path needed.
+    model: dinov3_vitb16_pretrained
+    model_args:
+      return_cls_token: True
+    output_format: parquet
+    embed_file_key: filename
+    layers: [-1] # Model layers to extract embeddings from, -1 means the last layer
+    embedding_pooling: null
+    has_cls: False
+    temporal_cfg:
+      temporal_wrapper: True
+      temporal_pooling: keep
+
+# define embedding extraction strategy names and lists of arguments for the embedding extraction function
+embedding_extraction_strategies:
+  # embeddings are nested [timesteps][tokens][dim]; the first args dict gets all 4
+  # time steps, the second picks the token. 224/16 -> 14x14 = 196 patch tokens
+  # (+ CLS appended last = 197 total); center patch = row 6, col 6 -> idx 90,
+  # CLS = idx 196.
+  all_steps_of_cls_token:
+    title: "CLS Token (All 4 Time Steps)"
+    slice_args:
+    - start: 0
+      stop: null
+      step: 1
+    - start: 196
+      stop: 197
+      step: 1
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+        - type: pca_ablation
+          params:
+            variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+        - type: knn_purity
+          params:
+            k_values: [1, 2, 5, 10, 20, 50]
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+      - type: temporal_cosine_similarity
+        transform: raw
+        params:
+          n_timesteps: 4
+          timestep_labels: ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"]
+    models:
+      - type: random_forest
+        transform: raw
+  all_steps_of_middle_patch:
+    title: "Temporal (Center Patch, All 4 Time Steps)"
+    slice_args:
+    - start: 0
+      stop: null
+      step: 1
+    - start: 90
+      stop: 91
+      step: 1
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+        - type: pca_ablation
+          params:
+            variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+        - type: knn_purity
+          params:
+            k_values: [1, 2, 5, 10, 20, 50]
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+      - type: temporal_cosine_similarity
+        transform: raw
+        params:
+          n_timesteps: 4
+          timestep_labels: ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"]
+    models:
+      - type: random_forest
+        transform: raw
+
+style:
+  category_column: "lulc"
+  colors:
+    "1": "#419bdf"    # Water
+    "2": "#397d49"    # Trees
+    "5": "#e49635"    # Crops
+    "7": "#c4281b"    # Built Area
+    "8": "#a59b8f"    # Bare Ground
+    "11": "#e3e2c3"   # Rangeland
+  labels:
+    "1": "Water"
+    "2": "Trees"
+    "5": "Crops"
+    "7": "Built Area"
+    "8": "Bare Ground"
+    "11": "Rangeland"

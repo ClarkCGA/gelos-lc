@@ -17,6 +17,12 @@ services:
       PROCESSED_PATH: /app/data/processed
       INTERIM_PATH: /app/data/interim
       EXTERNAL_PATH: /app/data/external
+      # HF_TOKEN authenticates gated HuggingFace downloads (DINOv3 weights).
+      # The DINOV3_*_CKPT vars must point at in-container paths (e.g. under
+      # /app/data/external/) — only the mounted data dirs are visible inside.
+      HF_TOKEN: "${HF_TOKEN:-}"
+      DINOV3_VITB16_CKPT: "${DINOV3_VITB16_CKPT:-}"
+      DINOV3_VITL16_SAT_CKPT: "${DINOV3_VITL16_SAT_CKPT:-}"
     working_dir: /app
     ports:
       - "${JUPYTER_HOST_PORT:-8888}:8888"
@@ -66,6 +72,12 @@ services:
       PROCESSED_PATH: /app/data/processed
       INTERIM_PATH: /app/data/interim
       EXTERNAL_PATH: /app/data/external
+      # HF_TOKEN authenticates gated HuggingFace downloads (DINOv3 weights).
+      # The DINOV3_*_CKPT vars must point at in-container paths (e.g. under
+      # /app/data/external/) — only the mounted data dirs are visible inside.
+      HF_TOKEN: "${HF_TOKEN:-}"
+      DINOV3_VITB16_CKPT: "${DINOV3_VITB16_CKPT:-}"
+      DINOV3_VITL16_SAT_CKPT: "${DINOV3_VITL16_SAT_CKPT:-}"
     working_dir: /app
     volumes:
       - "${RAW_PATH}:/app/data/raw/"
