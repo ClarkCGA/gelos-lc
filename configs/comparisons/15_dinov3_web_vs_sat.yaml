@@ -1,0 +1,40 @@
+# NOTE: this comparison is confounded by model size — Meta ships no satellite
+# ViT-B checkpoint, so web pretraining rides on ViT-B/16 while satellite
+# pretraining rides on ViT-L/16 (SAT-493M exists only for L and 7B).
+comparison_name: "KNN Purity — Story 15: DINOv3 Web (ViT-B) vs Satellite (ViT-L, size-confounded)"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  # DINOv3 layer dirs are named by block index (layers: [-1] -> last block),
+  # not layer_0 like the olmoearth/terramind experiments.
+  - data_version: "v0.50.1"
+    config: "exp034_dinov3_rgb_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "DINOv3 ViT-B/16 web (RGB)"
+    color: "#5c6bc0"
+  - data_version: "v0.50.1"
+    config: "exp035_dinov3_sat_rgb_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "DINOv3 ViT-L/16 SAT-493M (RGB)"
+    color: "#8d6e63"
+
+comp_metrics:
+  - type: knn_purity_comparison
+  - type: knn_purity_per_query_comparison
+
+comp_plots:
+  - type: knn_purity_plot
+    metric: knn_purity_comparison
+    params:
+      n_cols: 3
+  - type: knn_purity_violin_distribution_plot
+    metric: knn_purity_per_query_comparison
