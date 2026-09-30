@@ -21,6 +21,29 @@ def scale(array: np.array):
     return array_norm
 
 
+def parse_tracker_dates(date_str: str) -> np.ndarray:
+    """Parse a chip-tracker date string into a ``(T, 3)`` ``[year, month, day]`` array.
+
+    The chip tracker stores per-sensor acquisition dates as a comma-separated
+    string of ``YYYYMMDD`` tokens, e.g. ``"20230218,20230419,20230713,20231230"``.
+    The result uses the canonical calendar layout expected by
+    ``GELOSDataSet._get_timestamps`` (month 1-12, day 1-31), dtype int64;
+    backbones convert to their own packing at consumption time.
+
+    Raises:
+        ValueError: if any token is not exactly eight digits.
+    """
+    tokens = [token.strip() for token in str(date_str).split(",")]
+    rows = []
+    for token in tokens:
+        if len(token) != 8 or not token.isdigit():
+            raise ValueError(
+                f"Expected comma-separated YYYYMMDD tokens, got {token!r} in {date_str!r}"
+            )
+        rows.append([int(token[:4]), int(token[4:6]), int(token[6:8])])
+    return np.array(rows, dtype=np.int64).reshape(-1, 3)
+
+
 class GELOSLCDataSet(GELOSDataSet):
     """
     Land-cover dataset for embedding extraction and exploration.
@@ -259,3 +282,39 @@ class GELOSLCDataSet(GELOSDataSet):
             plt.suptitle(suptitle)
 
         return fig
+
+
+class GELOSLCMetadataDataSet(GELOSLCDataSet):
+    """Opt-in variant of :class:`GELOSLCDataSet` that exposes real acquisition dates.
+
+    Overrides the gelos#79 ``_get_timestamps`` hook to return the chip's
+    Sentinel-2 acquisition dates (tracker column ``s2l2a_dates``) as a
+    ``(T, 3)`` ``[year, month, day]`` array, so every batch carries a
+    ``timestamps`` tensor of shape ``(B, T, 3)`` that
+    ``LenientEmbeddingGenerationTask`` forwards to backbones exposing
+    ``set_batch_timestamps``. S2 is the primary temporal sensor (per the gelos
+    hook docstring); S1 dates in the tracker differ by a few days, but
+    OlmoEarth accepts a single ``timestamps`` tensor for all modalities.
+
+    Without this subclass the OlmoEarth backbone falls back to the constant
+    dummy date ``[15, 0, 2020]`` (all timesteps = January). Note that
+    OlmoEarth only consumes the *month* of each timestamp.
+
+    Select per experiment config with
+    ``data.init_args.dataset_class: src.gelosdataset_lc.GELOSLCMetadataDataSet``;
+    :class:`GELOSLCDataSet` itself is unchanged, so existing baselines are
+    unaffected.
+    """
+
+    TIMESTAMP_COLUMN = "s2l2a_dates"
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if self.TIMESTAMP_COLUMN not in self.gdf.columns:
+            raise ValueError(
+                f"{type(self).__name__} requires a {self.TIMESTAMP_COLUMN!r} column in "
+                f"gelos_chip_tracker.geojson; found columns: {list(self.gdf.columns)}"
+            )
+
+    def _get_timestamps(self, index: int) -> np.ndarray:
+        return parse_tracker_dates(self.gdf.iloc[index][self.TIMESTAMP_COLUMN])

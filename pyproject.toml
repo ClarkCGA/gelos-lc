@@ -50,6 +50,10 @@ python-dotenv = "*"
 mkdocs = "*"
 python-pptx = ">=1.0.2,<2"
 plotly = "*"
+# terratorch 1.1.1 pins jsonargparse<=4.35, which rules out lightning>=2.5.2;
+# the lightning that remains (2.5.1) requires packaging<25. Pin the conda
+# packaging so the conda solve doesn't hand pypi an unusable packaging==26.
+packaging = "<25"
 
 # Python-level deps come through pip so pixi resolves the same package
 # universe Docker does. torch/torchvision are pinned to match the
@@ -68,6 +72,12 @@ torchvision = "==0.22.*"
 path = "."
 editable = true
 
-# gelos is installed via `make dev-install` (editable from ../gelos) rather than
-# pixi, so its WIP dependency tree doesn't have to flow through pixi's solver.
-# Docker builds install gelos with `uv pip` for the same reason.
+# gelos is pinned to the same tag as the Dockerfile's GELOS_VERSION so the
+# local env and the images resolve the same gelos (and its dependency tree,
+# incl. olmoearth-pretrain, which unit tests need to import the OlmoEarth
+# backbone). Bump both together. `make dev-install` can still overlay an
+# editable ../gelos checkout on top for gelos development.
+[tool.pixi.pypi-dependencies.gelos]
+git = "https://github.com/ClarkCGA/gelos.git"
+tag = "v0.7.0"
+extras = ["alphaearth"]

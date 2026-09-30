@@ -120,6 +120,32 @@ def test_single_sensor(dummy_gelos_data):
     gc.collect()
 
 
+def test_clip_range_bands_forwarded_to_gelos(dummy_gelos_data):
+    """GELOSLCDataSet forwards clip_range_bands to GELOSDataSet (gelos >= v0.7.0).
+
+    The DINOv3 configs (exp034/exp035) rely on this: listed bands are clipped
+    to [min, max] at load time, unlisted bands are left untouched. Dummy chips
+    hold values 0..254, so clipping RED at 100 is observable.
+    """
+    from src.gelosdataset_lc import GELOSLCDataSet
+
+    bands = {"S2L2A": ["RED", "GREEN", "BLUE"]}
+    dataset = GELOSLCDataSet(
+        data_root=dummy_gelos_data,
+        bands=bands,
+        transform=None,
+        clip_range_bands={"S2L2A": {"RED": [0.0, 100.0]}},
+    )
+    assert dataset.clip_range_bands == {"S2L2A": {"RED": [0.0, 100.0]}}
+
+    image = dataset[0]["image"]  # (C, T, H, W) for a single sensor
+    assert image[0].max() <= 100.0, "RED should be clipped to the configured max"
+    assert image[1].max() > 100.0, "GREEN must not be clipped"
+    assert image[2].max() > 100.0, "BLUE must not be clipped"
+
+    gc.collect()
+
+
 def test_lowercase_stat_aliases():
     """GELOSDataModule resolves stats via lowercase class attributes; the
     aliases must exist and be identical to the primary uppercase dicts."""
@@ -152,4 +178,92 @@ def test_datamodule_resolves_dataset_stats(dummy_gelos_data):
         ), f"{modality} stds are all identity defaults — stats were not resolved"
 
     gc.collect()
+
+
+# Expected [year, month, day] rows for the fixture's s2l2a_dates string.
+EXPECTED_S2_TIMESTAMPS = [[2023, 2, 18], [2023, 4, 19], [2023, 7, 13], [2023, 12, 30]]
+
+
+def test_parse_tracker_dates():
+    import numpy as np
+    from src.gelosdataset_lc import parse_tracker_dates
+
+    dates = parse_tracker_dates("20230218,20230419,20230713,20231230")
+    assert dates.shape == (4, 3)
+    assert dates.dtype == np.int64
+    assert dates.tolist() == EXPECTED_S2_TIMESTAMPS
+
+    with pytest.raises(ValueError):
+        parse_tracker_dates("20230218,2023-04-19")
+    with pytest.raises(ValueError):
+        parse_tracker_dates("2023021,20230419")
+
+
+def _metadata_batch(data_root, dataset_class):
+    from gelos.gelosdatamodule import GELOSDataModule
+    from src.gelosdataset_lc import GELOSLCDataSet
+
+    datamodule = GELOSDataModule(
+        data_root=Path(data_root),
+        dataset_class=dataset_class,
+        batch_size=1,
+        num_workers=0,
+        bands={"S2L2A": GELOSLCDataSet.S2RTC_BAND_NAMES},
+    )
+    datamodule.setup("predict")
+    return next(iter(datamodule.predict_dataloader()))
+
+
+def test_metadata_dataset_batch_has_timestamps(dummy_gelos_data):
+    """GELOSLCMetadataDataSet adds a (B, T, 3) long tensor of real S2 dates."""
+    from src.gelosdataset_lc import GELOSLCMetadataDataSet
+
+    batch = _metadata_batch(dummy_gelos_data, GELOSLCMetadataDataSet)
+
+    assert "image" in batch
+    assert "filename" in batch
+    assert "file_id" in batch
+    assert "timestamps" in batch
+    assert batch["timestamps"].shape == (1, 4, 3)
+    assert batch["timestamps"].dtype == torch.long
+    assert batch["timestamps"][0].tolist() == EXPECTED_S2_TIMESTAMPS
+    # timestamps only: no location is threaded (nothing in gelos consumes it)
+    assert "location" not in batch
+
+    gc.collect()
+
+
+def test_metadata_dataset_resolves_from_string(dummy_gelos_data):
+    """The YAML `dataset_class` string path resolves to the metadata dataset."""
+    batch = _metadata_batch(dummy_gelos_data, "src.gelosdataset_lc.GELOSLCMetadataDataSet")
+
+    assert "timestamps" in batch
+    assert batch["timestamps"].shape == (1, 4, 3)
+    assert batch["timestamps"][0].tolist() == EXPECTED_S2_TIMESTAMPS
+
+    gc.collect()
+
+
+def test_base_dataset_omits_metadata_keys(dummy_gelos_data):
+    """Baseline GELOSLCDataSet behaviour is unchanged: no metadata keys."""
+    from src.gelosdataset_lc import GELOSLCDataSet
+
+    batch = _metadata_batch(dummy_gelos_data, GELOSLCDataSet)
+
+    assert "timestamps" not in batch
+    assert "location" not in batch
+
+    gc.collect()
+
+
+def test_metadata_dataset_missing_columns_raises(dummy_gelos_data):
+    """A tracker without s2l2a_dates fails fast with a clear error."""
+    from src.gelosdataset_lc import GELOSLCMetadataDataSet
+
+    tracker_path = Path(dummy_gelos_data) / "gelos_chip_tracker.geojson"
+    gdf = gpd.read_file(tracker_path).drop(columns=["s2l2a_dates"])
+    gdf.to_file(tracker_path, driver="GeoJSON")
+
+    with pytest.raises(ValueError, match="s2l2a_dates"):
+        GELOSLCMetadataDataSet(data_root=dummy_gelos_data)
 
