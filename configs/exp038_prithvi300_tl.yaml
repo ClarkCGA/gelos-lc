@@ -1,0 +1,206 @@
+# Time + location ("TL") variant of exp001 (Prithvi EO V2 300M), identical
+# except for the dataset class, model name, `num_frames`, experiment name and
+# title.
+#
+# Baseline exp001 runs the plain Prithvi-EO-2.0-300M checkpoint, which has no
+# temporal or location encoder. This config runs the 300M-TL checkpoint
+# (ibm-nasa-geospatial/Prithvi-EO-2.0-300M-TL), whose encoder adds a sinusoidal
+# temporal embedding ([year, day-of-year] per timestep) and location embedding
+# ([lat, lon] per chip) to every patch token. GELOSLCTimeLocationDataSet threads
+# each chip's real Sentinel-2 acquisition dates (chip tracker `s2l2a_dates`)
+# through the gelos#79 `_get_timestamps` hook -> batch["timestamps"] (B, T, 3)
+# and the chip centre (tracker `lat`/`lon`) through `_get_location` ->
+# batch["location"] (B, 2); gelos' PrithviTLBackbone wrapper (gelos#78,
+# `prithvi_eo_v2_300_tl_coords`) converts the dates to [year, doy] and forwards
+# both as temporal_coords / location_coords to the terratorch TL encoder.
+#
+# Do NOT use terratorch's stock name `prithvi_eo_v2_300_tl`: it loads the TL
+# weights but EmbeddingGenerationTask calls the backbone with the image alone,
+# so the time/location embeddings are silently dropped. The `_coords` wrapper
+# raises if either batch key is missing, so TL is never silently skipped.
+#
+# `model_args.num_frames: 4` is required and changes nothing else: like exp001
+# there is deliberately no `temporal_cfg`, so the 5D (B, 6, 4, 96, 96) chip is
+# encoded jointly and the output keeps exp001's one-CLS + 4x36 token layout
+# (slices 15/36 and 73-77 line up with exp001 for comparisons 18_*, 19a_*). The
+# wrapper's 5D path requires T == encoder.num_frames, and terratorch's
+# `_create_prithvi` defaults num_frames=1. Prithvi's positional embedding is a
+# fixed sincos buffer that is recomputed for the actual 4-step input either way,
+# so num_frames 1 vs 4 give identical encodings without coords (pinned by
+# tests/test_prithvi_tl.py); with num_frames=4 the temporal encoder repeats each
+# timestep's [year, doy] embedding over its 36 tokens (t-major), which is the
+# correct alignment.
+#
+# Note: the TL checkpoint is a separately fine-tuned set of weights, so
+# differences vs exp001 measure checkpoint + coords jointly (see 19a_*).
+experiment_name: "Prithvi EO V2 300M TL"
+data_version: "v0.50.1"
+chip_tracker: "gelos_chip_tracker.geojson"
+chip_id_column: "id"
+
+seed_everything: 0
+trainer:
+  accelerator: auto
+  strategy: auto
+  devices: auto
+  num_nodes: 1
+  callbacks: []
+  max_epochs: 0
+
+data:
+  class_path: gelos.gelosdatamodule.GELOSDataModule
+  init_args:
+    # Opt-in subclass that returns real S2 acquisition dates via _get_timestamps
+    # and the chip centre lat/lon via _get_location (both required by the
+    # prithvi_eo_v2_*_tl_coords wrapper).
+    dataset_class: src.gelosdataset_lc.GELOSLCTimeLocationDataSet
+    batch_size: 1
+    num_workers: 0
+    bands:
+      S2L2A:
+        - BLUE
+        - GREEN
+        - RED
+        - NIR_NARROW
+        - SWIR_1
+        - SWIR_2
+    transform:
+      - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
+      - class_path: albumentations.pytorch.transforms.ToTensorV2
+      - class_path: terratorch.datasets.transforms.UnflattenTemporalFromChannels
+        init_args:
+          n_timesteps: 4
+
+model:
+  class_path: terratorch.tasks.EmbeddingGenerationTask
+  title: Prithvi EO V2 300M TL
+  init_args:
+    # gelos-registered wrapper (gelos.backbones.prithvi_tl_backbone) that feeds
+    # temporal_coords / location_coords to the terratorch TL encoder.
+    model: prithvi_eo_v2_300_tl_coords
+    model_args:
+      bands:
+        - BLUE
+        - GREEN
+        - RED
+        - NIR_NARROW
+        - SWIR_1
+        - SWIR_2
+      pretrained: true
+      # Must equal the number of timesteps on the 5D (no temporal_cfg) path.
+      num_frames: 4
+    output_format: parquet
+    embed_file_key: filename 
+    layers: [-1] # Model layers to extract embeddings from, -1 means the last layer
+    embedding_pooling: null 
+    has_cls: True
+
+# define embedding extraction strategy names and lists of arguments for the embedding extraction function
+embedding_extraction_strategies:
+  cls_token:
+    title: "CLS Token"
+    slice_args:
+    - start: 0
+      stop: 1
+      step: 1
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+        - type: pca_ablation
+          params:
+            variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+        - type: knn_purity
+          params:
+            k_values: [1, 2, 5, 10, 20, 50]
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+    models:
+      - type: random_forest
+        transform: raw
+  all_steps_of_middle_patch:
+ # as the first patch is the cls token, we index the middle as 15 rather than 14.
+ # this is important for consistency with non-cls token models like terramind.
+    title: "Temporal (Center Patch, All 4 Time Steps)"
+    slice_args:
+    - start: 15
+      stop: null
+      # start and step are determined by the patch H and W dimensions determined by the model and the input sizes.
+      # in this case, as our inputs are 96x96 and prithvi eo 300m uses 16x16 patches, we have 36 patches per time step.
+      step: 36
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+        - type: pca_ablation
+          params:
+            variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+        - type: knn_purity
+          params:
+            k_values: [1, 2, 5, 10, 20, 50]
+    models:
+      - type: random_forest
+        transform: raw
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+      - type: temporal_cosine_similarity
+        transform: raw
+        params:
+          n_timesteps: 4
+          timestep_labels: ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"]
+  four_patches_from_april_to_june:
+    title: "Spatial (4 Central Patches, Single Time Step — Apr–Jun)"
+    slice_args:
+    - start: 73
+      stop: 77
+      step: 1
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+        - type: pca_ablation
+          params:
+            variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+        - type: knn_purity
+          params:
+            k_values: [1, 2, 5, 10, 20, 50]
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+
+style:
+  category_column: "lulc"
+  colors:
+    "1": "#419bdf"    # Water
+    "2": "#397d49"    # Trees
+    "5": "#e49635"    # Crops
+    "7": "#c4281b"    # Built Area
+    "8": "#a59b8f"    # Bare Ground
+    "11": "#e3e2c3"   # Rangeland
+  labels:
+    "1": "Water"
+    "2": "Trees"
+    "5": "Crops"
+    "7": "Built Area"
+    "8": "Bare Ground"
+    "11": "Rangeland"

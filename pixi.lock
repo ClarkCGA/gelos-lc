@@ -222,7 +222,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/c3/e0/ed45f50fe7a7320656ac7dde60f26afa3a92a21e14749135b4c03f3385b7/fonttools-4.66.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/11/b1/71a477adc7c36e5fb628245dfbdea2166feae310757dea848d02bd0689fd/frozenlist-1.8.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/51/c7/b64cae5dba3a1b138d7123ec36bb5ccd39d39939f18454407e5468f4763f/fsspec-2025.12.0-py3-none-any.whl
-      - pypi: git+https://github.com/ClarkCGA/gelos.git?tag=v0.7.0#72cf66c359985beaa82b48149d23d46b7a0e77f3
+      - pypi: git+https://github.com/ClarkCGA/gelos.git?tag=v0.8.0#1183e149cb83de2a74b51ac9bce2421baca770c4
       - pypi: https://files.pythonhosted.org/packages/59/a8/bd530cc264e62ddbc1d1bb7225823992e6f2432c664693e9281bb6b9c359/geopandas-1.1.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/aa/e3/26685384e4b66ff0928d9566ef6110a7df76029175a1842329d7e3515f10/google_crc32c-1.9.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/65/b9/6b29500a1c581ff4d77fd83c6568d068bee06f1b139fb6eb0a4f2d4bce8a/googleapis_common_protos-1.75.5-py3-none-any.whl
@@ -1156,7 +1156,7 @@ packages:
   - zstandard ; python_full_version < '3.14' and extra == 'test-full'
   - tqdm ; extra == 'tqdm'
   requires_python: '>=3.10'
-- pypi: git+https://github.com/ClarkCGA/gelos.git?tag=v0.7.0#72cf66c359985beaa82b48149d23d46b7a0e77f3
+- pypi: git+https://github.com/ClarkCGA/gelos.git?tag=v0.8.0#1183e149cb83de2a74b51ac9bce2421baca770c4
   name: gelos
   version: 0.7.0
   requires_dist:
@@ -4647,7 +4647,7 @@ packages:
 - pypi: ./
   name: src
   version: 0.1.0
-  sha256: d84c74997d204b624ce8ef4e3301790a1d29860e07cfce4ce4178e2414805bf6
+  sha256: 01f3d1f24f53ec47cc1c25d6be911ad82332f90b155e10a2095375d748ce80e0
   requires_python: ~=3.11.0
 - conda: https://conda.anaconda.org/conda-forge/noarch/stack_data-0.6.3-pyhd8ed1ab_1.conda
   sha256: 570da295d421661af487f1595045760526964f41471021056e993e73089e9c41

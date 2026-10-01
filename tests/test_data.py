@@ -27,6 +27,10 @@ def dummy_gelos_data(tmp_path) -> str:
         "lc2l2_paths": ["lc2l2_000000_20230217.tif,lc2l2_000000_20230524.tif,lc2l2_000000_20230921.tif,lc2l2_000000_20231218.tif"],
         "dem_paths": ["dem_000000.tif"],
         "lulc": [2],
+        # chip centre in decimal degrees, as in the real tracker (used by
+        # GELOSLCTimeLocationDataSet / Prithvi TL)
+        "lat": [4.2856],
+        "lon": [21.8256],
     }
     for s2l2a_dates, id in zip(data['s2l2a_dates'], data['id']):
         for date in s2l2a_dates.split(','):
@@ -227,7 +231,9 @@ def test_metadata_dataset_batch_has_timestamps(dummy_gelos_data):
     assert batch["timestamps"].shape == (1, 4, 3)
     assert batch["timestamps"].dtype == torch.long
     assert batch["timestamps"][0].tolist() == EXPECTED_S2_TIMESTAMPS
-    # timestamps only: no location is threaded (nothing in gelos consumes it)
+    # The metadata class deliberately emits timestamps only (exp036/exp037
+    # batches stay unchanged); location lives in GELOSLCTimeLocationDataSet
+    # (Prithvi TL, issue #50).
     assert "location" not in batch
 
     gc.collect()
@@ -266,4 +272,44 @@ def test_metadata_dataset_missing_columns_raises(dummy_gelos_data):
 
     with pytest.raises(ValueError, match="s2l2a_dates"):
         GELOSLCMetadataDataSet(data_root=dummy_gelos_data)
+
+
+def test_time_location_dataset_batch_has_location(dummy_gelos_data):
+    """GELOSLCTimeLocationDataSet adds (B, 2) float32 [lat, lon] next to timestamps."""
+    from src.gelosdataset_lc import GELOSLCTimeLocationDataSet
+
+    batch = _metadata_batch(dummy_gelos_data, GELOSLCTimeLocationDataSet)
+
+    assert "timestamps" in batch
+    assert batch["timestamps"].shape == (1, 4, 3)
+    assert batch["timestamps"][0].tolist() == EXPECTED_S2_TIMESTAMPS
+    assert "location" in batch
+    assert batch["location"].shape == (1, 2)
+    assert batch["location"].dtype == torch.float32
+    assert batch["location"][0].tolist() == pytest.approx([4.2856, 21.8256])
+
+    gc.collect()
+
+
+def test_time_location_dataset_resolves_from_string(dummy_gelos_data):
+    """The YAML `dataset_class` string path resolves to the time+location dataset."""
+    batch = _metadata_batch(dummy_gelos_data, "src.gelosdataset_lc.GELOSLCTimeLocationDataSet")
+
+    assert batch["timestamps"].shape == (1, 4, 3)
+    assert batch["location"].shape == (1, 2)
+    assert batch["location"][0].tolist() == pytest.approx([4.2856, 21.8256])
+
+    gc.collect()
+
+
+def test_time_location_dataset_missing_columns_raises(dummy_gelos_data):
+    """A tracker without lat/lon fails fast with a clear error."""
+    from src.gelosdataset_lc import GELOSLCTimeLocationDataSet
+
+    tracker_path = Path(dummy_gelos_data) / "gelos_chip_tracker.geojson"
+    gdf = gpd.read_file(tracker_path).drop(columns=["lat"])
+    gdf.to_file(tracker_path, driver="GeoJSON")
+
+    with pytest.raises(ValueError, match="lat"):
+        GELOSLCTimeLocationDataSet(data_root=dummy_gelos_data)
 

@@ -24,7 +24,7 @@ docker compose run --rm prod make analysis
 Experiments exp024–exp031 never override the gelos dataset metadata hooks, so the
 OlmoEarth backbone feeds the constant dummy date `[15, 0, 2020]` (all four
 timesteps = January 2020) to every chip. `src.gelosdataset_lc.GELOSLCMetadataDataSet`
-(gelos >= v0.6.0, hooks from gelos#79; the project pins gelos v0.7.0) returns each chip's real Sentinel-2
+(gelos >= v0.6.0, hooks from gelos#79; the project pins gelos v0.8.0, see Dockerfile) returns each chip's real Sentinel-2
 acquisition dates from the chip tracker's `s2l2a_dates` column; configs opt in with
 `data.init_args.dataset_class: src.gelosdataset_lc.GELOSLCMetadataDataSet`.
 
@@ -44,9 +44,9 @@ was trained to accept"):
 - OlmoEarth uses only the **month** of each timestamp (olmoearth_pretrain
   `nn/flexi_vit.py`, `months = timestamps[:, :, 1]`); day and year are ignored, so
   these runs measure real-month vs all-January seasonality encoding only.
-- **Location is not threaded.** gelos exposes a `_get_location` hook, but no gelos
-  backbone consumes it (OlmoEarth's encoder never reads `latlon`), so it was left out
-  rather than adding inert plumbing.
+- **Location is not threaded for OlmoEarth** (its encoder never reads `latlon`), so
+  `GELOSLCMetadataDataSet` emits timestamps only rather than inert plumbing. Location
+  *is* threaded for Prithvi TL — see the next section.
 
 Findings (v0.50.1, center patch, all 4 time steps, layer_0):
 
@@ -65,6 +65,57 @@ Findings (v0.50.1, center patch, all 4 time steps, layer_0):
 Takeaway: for chip-level land-cover class separability, correct seasonality
 encoding is not a meaningful lever for OlmoEarth v1.2 on this dataset, even though
 it changes the embeddings themselves substantially.
+
+## Time + location experiments (Prithvi EO V2 TL, issue #50)
+
+Prithvi EO V2 ships "TL" checkpoints (300M-TL, 600M-TL) whose encoder adds two
+sinusoidal embeddings (each with a learned scale) to every patch token: a
+**temporal** one from `[year, day-of-year]` per timestep and a **location** one from
+`[lat, lon]` per chip. Baselines exp001/exp004 run the plain checkpoints, which have
+neither.
+
+- **Backbone.** gelos v0.8.0 exposes the TL encoders through a wrapper,
+  `gelos/backbones/prithvi_tl_backbone.py` (gelos#78), registered as
+  `prithvi_eo_v2_{300,600}_tl_coords`. Do not use terratorch's plain
+  `prithvi_eo_v2_*_tl` names: they load the TL weights, but the embedding task calls
+  the backbone with the image alone, so the time/location embeddings are silently
+  dropped. The `_coords` wrapper takes `batch["timestamps"]` / `batch["location"]`
+  from the gelos side-channel, converts the dates to `[year, doy]`, forwards both as
+  `temporal_coords` / `location_coords`, and **raises** if either key is missing.
+- **Dataset.** `src.gelosdataset_lc.GELOSLCTimeLocationDataSet` extends
+  `GELOSLCMetadataDataSet` with `_get_location` from the chip tracker's `lat`/`lon`
+  columns (chip centre, decimal degrees), so each batch carries `timestamps`
+  `(B, T, 3)` (from `s2l2a_dates`) and `location` `(B, 2)`. Configs opt in with
+  `data.init_args.dataset_class: src.gelosdataset_lc.GELOSLCTimeLocationDataSet`.
+- **`model_args.num_frames: 4`, no `temporal_cfg`.** Like exp001/exp004 the TL configs
+  feed the 5D `(B, 6, 4, H, W)` chip straight to the encoder (joint space-time
+  encoding), which keeps the one-CLS + 4x36 (600M: 4x49) token layout so the slice
+  indices line up with the baselines. The wrapper's 5D path requires
+  `T == num_frames`, and terratorch defaults `num_frames=1`; the value does not
+  change the encoding otherwise (`tests/test_prithvi_tl.py` pins this). The
+  upstream-recommended `temporal_cfg.temporal_wrapper: true` would change the token
+  layout and is deliberately not used.
+
+| Config | Baseline | Difference |
+|---|---|---|
+| `exp038_prithvi300_tl` | `exp001` (Prithvi 300M) | 300M-TL checkpoint + real S2 dates + chip lat/lon |
+| `exp039_prithvi600_tl` | `exp004` (Prithvi 600M) | 600M-TL checkpoint + real S2 dates + chip lat/lon |
+
+Comparisons: `configs/comparisons/18_prithvi_tl_knn.yaml` (four-way kNN purity with
+paired violins), `19a_prithvi300_tl_embeddings.yaml` / `19b_prithvi600_tl_embeddings.yaml`
+(per-chip cosine similarity to the no-coords control) and
+`make compare-model-results-prithvi-tl` (downstream random-forest accuracy per class).
+gelos v0.8.0 writes figures per config stem, so they land under
+`reports/figures/comparisons/{18_prithvi_tl_knn,19a_prithvi300_tl_embeddings,19b_prithvi600_tl_embeddings}/`
+plus `reports/figures/comparisons/18_prithvi_tl/` for the random-forest chart, and the
+experiment figures under `reports/figures/v0.50.1/exp038_prithvi300_tl/` and
+`.../exp039_prithvi600_tl/`.
+
+Caveat: the TL checkpoints are separately trained weights, so unlike 17a/17b (same
+OlmoEarth weights, dates on/off) 19a/19b measure checkpoint **and** coords jointly —
+the full "TL treatment", not a pure coords ablation.
+
+Findings: _to be filled in after the exp038/exp039 runs._
 
 ## Project Organization
 
