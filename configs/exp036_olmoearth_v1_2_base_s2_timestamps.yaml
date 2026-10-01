@@ -140,6 +140,9 @@ embedding_extraction_strategies:
       - type: knn_purity
         params:
           k_values: [1, 2, 5, 10, 20, 50]
+      - type: knn_geo_distance
+        params:
+          k_values: [1, 2, 5, 10, 20, 50]
     plots:
       - type: scatter_2d
         transform: tsne
@@ -175,6 +178,9 @@ embedding_extraction_strategies:
         params:
           variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
       - type: knn_purity
+        params:
+          k_values: [1, 2, 5, 10, 20, 50]
+      - type: knn_geo_distance
         params:
           k_values: [1, 2, 5, 10, 20, 50]
     plots:

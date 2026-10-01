@@ -75,11 +75,11 @@ editable = true
 # gelos is pinned to the same tag as the Dockerfile's GELOS_VERSION so the
 # local env and the images resolve the same gelos (and its dependency tree,
 # incl. olmoearth-pretrain, which unit tests need to import the OlmoEarth
-# backbone). Bump both together. v0.8.0 brings the Prithvi TL wrapper
+# backbone). Bump both together. v0.9.0 adds the kNN geographic-distance metric and plots (gelos#85). v0.8.0 brought the Prithvi TL wrapper
 # (gelos#78, `prithvi_eo_v2_*_tl_coords`, used by exp038/exp039) and per-config
 # figure folders (gelos#89). `make dev-install` can still overlay an editable
 # ../gelos checkout on top for gelos development.
 [tool.pixi.pypi-dependencies.gelos]
 git = "https://github.com/ClarkCGA/gelos.git"
-tag = "v0.8.0"
+tag = "v0.9.0"
 extras = ["alphaearth"]
