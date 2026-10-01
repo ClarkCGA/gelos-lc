@@ -76,7 +76,7 @@ generation:
 	
 .PHONY: analysis
 analysis:
-	python -m gelos.analysis
+	python -m gelos.analysis -c configs/
 
 ## Run cross-experiment comparisons
 .PHONY: comparison
