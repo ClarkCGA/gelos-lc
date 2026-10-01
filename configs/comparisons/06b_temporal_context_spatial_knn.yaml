@@ -1,0 +1,44 @@
+comparison_name: "Spatial kNN (GSD & Latitude Difference) — Story 6: Temporal Context (Temporal vs Spatial)"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp004_prithvi600"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_31"
+    label: "Prithvi 600M | S2 (6-band) | Temporal (4 steps)"
+    color: "#00838f"
+  - data_version: "v0.50.1"
+    config: "exp004_prithvi600"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_31"
+    label: "Prithvi 600M | S2 (6-band) | Spatial (1 step)"
+    color: "#015a63"
+  - data_version: "v0.50.1"
+    config: "exp015_spectral_bands_s2_prithvi_bands_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "all_steps_of_middle_patch"
+    label: "Spectral Bands | S2 (6-band) | Temporal (4 steps)"
+    color: "#999999"
+  - data_version: "v0.50.1"
+    config: "exp016_spectral_bands_s2_prithvi_bands_four_patches"
+    strategy: "four_patches_from_april_to_june"
+    layer: "four_patches_from_april_to_june"
+    label: "Spectral Bands | S2 (6-band) | Spatial (1 step)"
+    color: "#555555"
+
+comp_metrics:
+  - type: knn_geo_distance_comparison
+
+comp_plots:
+  - type: knn_gsd_plot
+    metric: knn_geo_distance_comparison
+  - type: knn_lat_diff_plot
+    metric: knn_geo_distance_comparison

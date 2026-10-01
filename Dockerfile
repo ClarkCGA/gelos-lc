@@ -1,5 +1,6 @@
 # single gelos pin shared by every stage — re-declared bare inside each stage
-# that uses it. v0.8.0 is required for the Prithvi TL wrapper
+# that uses it. v0.9.0 adds the kNN geographic-distance metric and plots
+# (gelos#85: `knn_geo_distance`, `knn_gsd_plot`, `knn_lat_diff_plot`); v0.8.0 is required for the Prithvi TL wrapper
 # (gelos#78 / PR #90: `prithvi_eo_v2_*_tl_coords`, consumed by exp038/exp039
 # via GELOSLCTimeLocationDataSet) and also brings per-config figure folders
 # (gelos#89 / PR #91: figures land in `figures/{data_version}/{config_stem}/`
@@ -9,7 +10,7 @@
 # used by GELOSLCMetadataDataSet) and OlmoEarth patch nodata masking (gelos#86).
 # Keep in sync with the gelos pin in pyproject.toml's
 # [tool.pixi.pypi-dependencies].
-ARG GELOS_VERSION=v0.8.0
+ARG GELOS_VERSION=v0.9.0
 
 # olmoearth-pretrain (a gelos core dependency) requires torch>=2.7,<2.8 — keep
 # the base torch inside that range so pip installs don't replace the baked-in

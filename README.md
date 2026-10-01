@@ -24,7 +24,7 @@ docker compose run --rm prod make analysis
 Experiments exp024–exp031 never override the gelos dataset metadata hooks, so the
 OlmoEarth backbone feeds the constant dummy date `[15, 0, 2020]` (all four
 timesteps = January 2020) to every chip. `src.gelosdataset_lc.GELOSLCMetadataDataSet`
-(gelos >= v0.6.0, hooks from gelos#79; the project pins gelos v0.8.0, see Dockerfile) returns each chip's real Sentinel-2
+(gelos >= v0.6.0, hooks from gelos#79; the project pins gelos v0.9.0, see Dockerfile) returns each chip's real Sentinel-2
 acquisition dates from the chip tracker's `s2l2a_dates` column; configs opt in with
 `data.init_args.dataset_class: src.gelosdataset_lc.GELOSLCMetadataDataSet`.
 
