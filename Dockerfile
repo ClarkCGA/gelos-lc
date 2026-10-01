@@ -1,6 +1,11 @@
 # single gelos pin shared by every stage — re-declared bare inside each stage
-# that uses it
-ARG GELOS_VERSION=v0.5.0
+# that uses it. v0.7.0 is required for the DINOv3 backbones and the
+# GELOSDataSet `clip_range_bands` param (gelos#16/#88, forwarded unconditionally
+# by GELOSLCDataSet) on top of v0.6.0's dataset timestamp/location hooks
+# (gelos#79, used by GELOSLCMetadataDataSet) and OlmoEarth patch nodata masking
+# (gelos#86). Keep in sync with the gelos pin in pyproject.toml's
+# [tool.pixi.pypi-dependencies].
+ARG GELOS_VERSION=v0.7.0
 
 # olmoearth-pretrain (a gelos core dependency) requires torch>=2.7,<2.8 — keep
 # the base torch inside that range so pip installs don't replace the baked-in
