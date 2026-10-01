@@ -318,3 +318,38 @@ class GELOSLCMetadataDataSet(GELOSLCDataSet):
 
     def _get_timestamps(self, index: int) -> np.ndarray:
         return parse_tracker_dates(self.gdf.iloc[index][self.TIMESTAMP_COLUMN])
+
+
+class GELOSLCTimeLocationDataSet(GELOSLCMetadataDataSet):
+    """Opt-in variant that exposes real acquisition dates *and* chip location.
+
+    Emits both ``timestamps`` ``(B, T, 3)`` ``[year, month, day]`` (inherited
+    from :class:`GELOSLCMetadataDataSet`, tracker column ``s2l2a_dates``) and
+    ``location`` ``(B, 2)`` ``[lat, lon]`` in decimal degrees, latitude first
+    (tracker columns ``lat``/``lon``; the chip centre), via the gelos
+    ``_get_location`` hook. Both keys are required by gelos' ``PrithviTLBackbone``
+    (``prithvi_eo_v2_*_tl_coords``, gelos#78), which converts the dates to
+    Prithvi's ``[year, day_of_year]`` temporal encoding and feeds the location
+    encoding, and raises if either key is missing.
+
+    Select per experiment config with
+    ``data.init_args.dataset_class: src.gelosdataset_lc.GELOSLCTimeLocationDataSet``.
+    Kept separate from :class:`GELOSLCMetadataDataSet` so the OlmoEarth
+    timestamp experiments (exp036/exp037) keep emitting timestamps only and
+    their batches are unchanged.
+    """
+
+    LOCATION_COLUMNS = ("lat", "lon")
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        missing = [col for col in self.LOCATION_COLUMNS if col not in self.gdf.columns]
+        if missing:
+            raise ValueError(
+                f"{type(self).__name__} requires {missing} column(s) in "
+                f"gelos_chip_tracker.geojson; found columns: {list(self.gdf.columns)}"
+            )
+
+    def _get_location(self, index: int) -> np.ndarray:
+        row = self.gdf.iloc[index]
+        return np.array([row["lat"], row["lon"]], dtype=np.float32)

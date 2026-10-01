@@ -1,0 +1,197 @@
+# Time + location ("TL") variant of exp004 (Prithvi EO V2 600M), identical
+# except for the dataset class, model name, `num_frames`, experiment name and
+# title. See exp038_prithvi300_tl.yaml for the full rationale; in short:
+#
+# - Runs the 600M-TL checkpoint (ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL)
+#   through gelos' PrithviTLBackbone wrapper (gelos#78,
+#   `prithvi_eo_v2_600_tl_coords`), which feeds each chip's real S2
+#   acquisition dates (tracker `s2l2a_dates` -> [year, doy] per timestep) and
+#   chip centre (tracker `lat`/`lon`) to the encoder's temporal and location
+#   embeddings. GELOSLCTimeLocationDataSet supplies batch["timestamps"] and
+#   batch["location"]; the wrapper raises if either is missing.
+# - Do NOT use terratorch's stock `prithvi_eo_v2_600_tl`: it silently drops
+#   the coords.
+# - `model_args.num_frames: 4` is required by the wrapper's 5D path (no
+#   `temporal_cfg`, joint space-time encoding, same as exp004) and does not
+#   change the encoding without coords.
+# - 600M-TL uses 14-px patches like exp004: inputs are padded to 98x98, giving
+#   7x7 = 49 tokens per timestep after the CLS token, so the slices (25/49 and
+#   73-77) line up with exp004 for comparisons 18_* and 19b_*.
+# - The TL checkpoint is a separately fine-tuned set of weights, so differences
+#   vs exp004 measure checkpoint + coords jointly.
+experiment_name: "Prithvi EO V2 600M TL"
+data_version: "v0.50.1"
+chip_tracker: "gelos_chip_tracker.geojson"
+chip_id_column: "id"
+
+seed_everything: 0
+trainer:
+  accelerator: auto
+  strategy: auto
+  devices: auto
+  num_nodes: 1
+  callbacks: []
+  max_epochs: 0
+
+data:
+  class_path: gelos.gelosdatamodule.GELOSDataModule
+  init_args:
+    # Opt-in subclass that returns real S2 acquisition dates via _get_timestamps
+    # and the chip centre lat/lon via _get_location (both required by the
+    # prithvi_eo_v2_*_tl_coords wrapper).
+    dataset_class: src.gelosdataset_lc.GELOSLCTimeLocationDataSet
+    batch_size: 1
+    num_workers: 0
+    bands:
+      S2L2A:
+        - BLUE
+        - GREEN
+        - RED
+        - NIR_NARROW
+        - SWIR_1
+        - SWIR_2
+    transform:
+      - class_path: terratorch.datasets.transforms.FlattenTemporalIntoChannels
+      - class_path: albumentations.PadIfNeeded
+        init_args:
+          min_height: 98
+          min_width: 98
+      - class_path: albumentations.pytorch.transforms.ToTensorV2
+      - class_path: terratorch.datasets.transforms.UnflattenTemporalFromChannels
+        init_args:
+          n_timesteps: 4
+
+model:
+  class_path: terratorch.tasks.EmbeddingGenerationTask
+  title: Prithvi EO V2 600M TL
+  init_args:
+    # gelos-registered wrapper (gelos.backbones.prithvi_tl_backbone) that feeds
+    # temporal_coords / location_coords to the terratorch TL encoder.
+    model: prithvi_eo_v2_600_tl_coords
+    model_args:
+      bands:
+        - BLUE
+        - GREEN
+        - RED
+        - NIR_NARROW
+        - SWIR_1
+        - SWIR_2
+      pretrained: true
+      # Must equal the number of timesteps on the 5D (no temporal_cfg) path.
+      num_frames: 4
+    output_format: parquet
+    embed_file_key: filename
+    layers: [-1] # Model layers to extract embeddings from, -1 means the last layer
+    embedding_pooling: null
+    has_cls: True
+
+# define embedding extraction strategy names and lists of arguments for the embedding extraction function
+embedding_extraction_strategies:
+  cls_token:
+    title: "CLS Token"
+    slice_args:
+    - start: 0
+      stop: 1
+      step: 1
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+        - type: pca_ablation
+          params:
+            variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+        - type: knn_purity
+          params:
+            k_values: [1, 2, 5, 10, 20, 50]
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+    models:
+      - type: random_forest
+        transform: raw
+  all_steps_of_middle_patch:
+ # as the first patch is the cls token, we index the middle as 25 rather than 24.
+ # this is important for consistency with non-cls token models like terramind.
+    title: "Temporal (Center Patch, All 4 Time Steps)"
+    slice_args:
+    - start: 25
+      stop: null
+      # start and step are determined by the patch H and W dimensions determined by the model and the input sizes.
+      # in this case, as our inputs are 96x96 and prithvi eo 600m uses 14x14 patches,
+      # inputs are padded to 98x98 and we have 7x7 or 49 patches per time step.
+      step: 49
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+        - type: pca_ablation
+          params:
+            variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+        - type: knn_purity
+          params:
+            k_values: [1, 2, 5, 10, 20, 50]
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+      - type: temporal_cosine_similarity
+        transform: raw
+        params:
+          n_timesteps: 4
+          timestep_labels: ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"]
+    models:
+      - type: random_forest
+        transform: raw
+  four_patches_from_april_to_june:
+    title: "Spatial (4 Central Patches, Single Time Step — Apr–Jun)"
+    slice_args:
+    - start: 73
+      stop: 77
+      step: 1
+    transforms:
+      - type: tsne
+      - type: umap
+    metrics:
+        - type: pca_ablation
+          params:
+            variance_thresholds: [0.8, 0.85, 0.9, 0.95, 0.99]
+        - type: knn_purity
+          params:
+            k_values: [1, 2, 5, 10, 20, 50]
+    plots:
+      - type: scatter_2d
+        transform: tsne
+        params:
+          axis_lim: 160
+      - type: scatter_2d
+        transform: umap
+        params:
+          axis_lim: ~
+
+style:
+  category_column: "lulc"
+  colors:
+    "1": "#419bdf"    # Water
+    "2": "#397d49"    # Trees
+    "5": "#e49635"    # Crops
+    "7": "#c4281b"    # Built Area
+    "8": "#a59b8f"    # Bare Ground
+    "11": "#e3e2c3"   # Rangeland
+  labels:
+    "1": "Water"
+    "2": "Trees"
+    "5": "Crops"
+    "7": "Built Area"
+    "8": "Bare Ground"
+    "11": "Rangeland"

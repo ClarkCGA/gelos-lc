@@ -1,0 +1,56 @@
+# Story 19a: embedding-space shift from Prithvi's TL inputs, 300M.
+# Control exp001 runs the plain Prithvi-EO-2.0-300M checkpoint; exp038 runs the
+# 300M-TL checkpoint with real S2 acquisition dates and chip lat/lon threaded
+# via GELOSLCTimeLocationDataSet and gelos#78 (`prithvi_eo_v2_300_tl_coords`).
+# Per-chip cosine similarity pairs each chip with itself in the control.
+# x_range is deliberately omitted (autoscale): the expected shift is unknown
+# for Prithvi. Unlike 17a/17b (OlmoEarth, identical weights), the two arms here
+# differ in checkpoint AND coords -- the TL weights were fine-tuned with coords
+# -- so this measures the full "TL treatment", not coords alone.
+comparison_name: "Prithvi EO V2 300M: No coords vs Time + Location @ Temporal (4 steps)"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp001_prithvi300"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "Control"
+    color: "#8ab4e8"
+  - data_version: "v0.50.1"
+    config: "exp038_prithvi300_tl"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "Time + location"
+    color: "#1f4e8c"
+
+comp_metrics:
+  - type: per_chip_similarity_to_control
+    params:
+      control_label: "Control"
+      chip_tracker_path: "/app/data/raw/v0.50.1/gelos_chip_tracker.geojson"
+      chip_id_column: "id"
+      category_column: "lulc"
+  - type: cosine_distance
+
+comp_plots:
+  - type: per_class_similarity_distribution_plot
+    metric: per_chip_similarity_to_control
+    params:
+      control_label: "Control"
+      n_cols: 3
+      bins: 30
+  - type: per_class_ecdf_plot
+    metric: per_chip_similarity_to_control
+    params:
+      control_label: "Control"
+      n_cols: 3
+  - type: distance_matrix
+    metric: cosine_distance

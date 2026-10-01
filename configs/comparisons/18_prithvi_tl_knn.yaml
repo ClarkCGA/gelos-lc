@@ -1,0 +1,60 @@
+# Story 18: does giving Prithvi EO V2 its full "TL" inputs -- real S2
+# acquisition dates ([year, day-of-year] per timestep) and the chip location
+# ([lat, lon]) -- change class separability? Baselines exp001/exp004 run the
+# plain 300M/600M checkpoints (no temporal/location encoder); exp038/exp039 run
+# the 300M-TL/600M-TL checkpoints with coords threaded via gelos#78
+# (`prithvi_eo_v2_*_tl_coords`) and GELOSLCTimeLocationDataSet. Note the TL
+# checkpoints are separately fine-tuned weights, so each pair measures the full
+# "TL treatment" (checkpoint + coords), not coords alone. Pairs (baseline,
+# variant) share a hue: light/dark blue for 300M, light/dark teal for 600M.
+comparison_name: "KNN Purity — Story 18: Prithvi 300M/600M vs TL (time + location)"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp001_prithvi300"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "Prithvi 300M | S2 (6-band) | No coords"
+    color: "#8ab4e8"
+  - data_version: "v0.50.1"
+    config: "exp038_prithvi300_tl"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "Prithvi 300M TL | S2 (6-band) | Time + location"
+    color: "#1f4e8c"
+  - data_version: "v0.50.1"
+    config: "exp004_prithvi600"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_31"
+    label: "Prithvi 600M | S2 (6-band) | No coords"
+    color: "#80cbc4"
+  - data_version: "v0.50.1"
+    config: "exp039_prithvi600_tl"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_31"
+    label: "Prithvi 600M TL | S2 (6-band) | Time + location"
+    color: "#00838f"
+
+comp_metrics:
+  - type: knn_purity_comparison
+  - type: knn_purity_per_query_comparison
+
+comp_plots:
+  - type: knn_purity_plot
+    metric: knn_purity_comparison
+    params:
+      n_cols: 3
+  - type: knn_purity_violin_distribution_plot
+    metric: knn_purity_per_query_comparison
+    params:
+      split_pairs:
+        - ["Prithvi 300M | S2 (6-band) | No coords", "Prithvi 300M TL | S2 (6-band) | Time + location"]
+        - ["Prithvi 600M | S2 (6-band) | No coords", "Prithvi 600M TL | S2 (6-band) | Time + location"]
