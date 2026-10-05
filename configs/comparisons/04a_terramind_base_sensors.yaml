@@ -1,0 +1,47 @@
+comparison_name: "KNN Purity — 4a: Terramind Base Sensors (S2, S2+S1, S2+S1+DEM) vs Spectral Bands (S2+S1+DEM)"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp011_terramind_v1_base_s2_only"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "TM Base | S2 (11-band) | Temporal (4 steps)"
+    color: "#e09898"
+  - data_version: "v0.50.1"
+    config: "exp013_terramind_v1_base_s2_s1"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "TM Base | S2+S1 | Temporal (4 steps)"
+    color: "#c45a5a"
+  - data_version: "v0.50.1"
+    config: "exp007_terramind_v1_base"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "TM Base | S2+S1+DEM | Temporal (4 steps)"
+    color: "#8b1a1a"
+  - data_version: "v0.50.1"
+    config: "exp021_spectral_bands_s2_s1_dem_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "all_steps_of_middle_patch"
+    label: "Spectral Bands | S2+S1+DEM | Temporal (4 steps)"
+    color: "#333333"
+
+comp_metrics:
+  - type: knn_purity_comparison
+  - type: knn_purity_per_query_comparison
+
+comp_plots:
+  - type: knn_purity_plot
+    metric: knn_purity_comparison
+    params:
+      n_cols: 3
+  - type: knn_purity_violin_distribution_plot
+    metric: knn_purity_per_query_comparison

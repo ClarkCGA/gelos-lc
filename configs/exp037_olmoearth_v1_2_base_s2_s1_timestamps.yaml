@@ -22,7 +22,7 @@
 # Bands, transforms, temporal_pooling: keep, spatial_pooling: 4, extraction
 # strategies, metrics and models are byte-identical to exp031 so slices and
 # artifact prefixes line up for the comparison configs (16_*, 17b_*).
-experiment_name: "OlmoEarth V1.2 Base S2+S1 + Timestamps"
+experiment_name: "OlmoEarth V1.2 Base S2+S1"
 data_version: "v0.50.1"
 chip_tracker: "gelos_chip_tracker.geojson"
 chip_id_column: "id"
@@ -141,7 +141,7 @@ embedding_extraction_strategies:
   # Center patch at each of the 4 timesteps: tokens 14, 50, 86, 122 -> 4*768
   # dims/chip. Tests whether multi-temporal tokens improve class separability.
   all_steps_of_middle_patch:
-    title: "Temporal (Center Patch, All 4 Time Steps)"
+    title: "Center Patch × 4 Time Steps"
     slice_args:
       - start: 14
         stop: null
@@ -181,7 +181,7 @@ embedding_extraction_strategies:
   # patches 13-16 -> tokens 49-52, mirroring exp013 -> 4*768 dims/chip, the
   # single-timestep counterpart to all_steps_of_middle_patch at equal dims.
   four_patches_from_april_to_june:
-    title: "Spatial (4 Central Patches, Single Time Step — Apr–Jun)"
+    title: "4 Central Patches, Apr–Jun"
     slice_args:
       - start: 49
         stop: 53

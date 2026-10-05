@@ -78,7 +78,7 @@ model:
 # define embedding extraction strategy names and lists of arguments for the embedding extraction function
 embedding_extraction_strategies:
   all_steps_of_middle_patch:
-    title: "Temporal (Center Patch, All 4 Time Steps)"
+    title: "Center Patch × 4 Time Steps"
     slice_args:
     - start: 0
       stop: null
@@ -87,7 +87,7 @@ embedding_extraction_strategies:
       stop: 15
       step: 1
   four_patches_from_april_to_june:
-    title: "Spatial (4 Central Patches, Single Time Step — Apr–Jun)"
+    title: "4 Central Patches, Apr–Jun"
     slice_args:
     - start: 1
       stop: 2

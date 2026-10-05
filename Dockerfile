@@ -10,7 +10,7 @@
 # used by GELOSLCMetadataDataSet) and OlmoEarth patch nodata masking (gelos#86).
 # Keep in sync with the gelos pin in pyproject.toml's
 # [tool.pixi.pypi-dependencies].
-ARG GELOS_VERSION=v0.9.0
+ARG GELOS_VERSION=v0.11.0
 
 # olmoearth-pretrain (a gelos core dependency) requires torch>=2.7,<2.8 — keep
 # the base torch inside that range so pip installs don't replace the baked-in

@@ -60,7 +60,7 @@ embedding_extraction_strategies:
   # (+ CLS appended last = 197 total); center patch = row 6, col 6 -> idx 90,
   # CLS = idx 196.
   all_steps_of_cls_token:
-    title: "CLS Token (All 4 Time Steps)"
+    title: "CLS Token × 4 Time Steps"
     slice_args:
     - start: 0
       stop: null
@@ -99,7 +99,7 @@ embedding_extraction_strategies:
       - type: random_forest
         transform: raw
   all_steps_of_middle_patch:
-    title: "Temporal (Center Patch, All 4 Time Steps)"
+    title: "Center Patch × 4 Time Steps"
     slice_args:
     - start: 0
       stop: null

@@ -1,0 +1,296 @@
+# Every (experiment, extraction strategy) in configs/ whose analysis includes the
+# pca_ablation metric. Perturbation experiments do not compute it and are absent.
+comparison_name: "PCA Ablation Comparison (All Experiments)"
+
+experiments:
+  # --- exp001_prithvi300 ---
+  - data_version: "v0.50.1"
+    config: "exp001_prithvi300"
+    strategy: "cls_token"
+    layer: "layer_23"
+    label: "Prithvi 300M | S2 (6-band) | CLS Token"
+  - data_version: "v0.50.1"
+    config: "exp001_prithvi300"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "Prithvi 300M | S2 (6-band) | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp001_prithvi300"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_23"
+    label: "Prithvi 300M | S2 (6-band) | Spatial (1 step)"
+
+  # --- exp004_prithvi600 ---
+  - data_version: "v0.50.1"
+    config: "exp004_prithvi600"
+    strategy: "cls_token"
+    layer: "layer_31"
+    label: "Prithvi 600M | S2 (6-band) | CLS Token"
+  - data_version: "v0.50.1"
+    config: "exp004_prithvi600"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_31"
+    label: "Prithvi 600M | S2 (6-band) | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp004_prithvi600"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_31"
+    label: "Prithvi 600M | S2 (6-band) | Spatial (1 step)"
+
+  # --- exp007_terramind_v1_base ---
+  - data_version: "v0.50.1"
+    config: "exp007_terramind_v1_base"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "TM Base | S2+S1+DEM | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp007_terramind_v1_base"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_11"
+    label: "TM Base | S2+S1+DEM | Spatial (1 step)"
+
+  # --- exp010_terramind_v1_large ---
+  - data_version: "v0.50.1"
+    config: "exp010_terramind_v1_large"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "TM Large | S2+S1+DEM | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp010_terramind_v1_large"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_23"
+    label: "TM Large | S2+S1+DEM | Spatial (1 step)"
+
+  # --- exp011_terramind_v1_base_s2_only ---
+  - data_version: "v0.50.1"
+    config: "exp011_terramind_v1_base_s2_only"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "TM Base | S2 (11-band) | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp011_terramind_v1_base_s2_only"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_11"
+    label: "TM Base | S2 (11-band) | Spatial (1 step)"
+
+  # --- exp012_terramind_v1_large_s2_only ---
+  - data_version: "v0.50.1"
+    config: "exp012_terramind_v1_large_s2_only"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "TM Large | S2 (11-band) | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp012_terramind_v1_large_s2_only"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_23"
+    label: "TM Large | S2 (11-band) | Spatial (1 step)"
+
+  # --- exp013_terramind_v1_base_s2_s1 ---
+  - data_version: "v0.50.1"
+    config: "exp013_terramind_v1_base_s2_s1"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "TM Base | S2+S1 | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp013_terramind_v1_base_s2_s1"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_11"
+    label: "TM Base | S2+S1 | Spatial (1 step)"
+
+  # --- exp014_terramind_v1_large_s2_s1 ---
+  - data_version: "v0.50.1"
+    config: "exp014_terramind_v1_large_s2_s1"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "TM Large | S2+S1 | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp014_terramind_v1_large_s2_s1"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_23"
+    label: "TM Large | S2+S1 | Spatial (1 step)"
+
+  # --- exp015_spectral_bands_s2_prithvi_bands_middle_patch ---
+  - data_version: "v0.50.1"
+    config: "exp015_spectral_bands_s2_prithvi_bands_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "all_steps_of_middle_patch"
+    label: "Spectral Bands | S2 (6-band) | Temporal (4 steps)"
+
+  # --- exp016_spectral_bands_s2_prithvi_bands_four_patches ---
+  - data_version: "v0.50.1"
+    config: "exp016_spectral_bands_s2_prithvi_bands_four_patches"
+    strategy: "four_patches_from_april_to_june"
+    layer: "four_patches_from_april_to_june"
+    label: "Spectral Bands | S2 (6-band) | Spatial (1 step)"
+
+  # --- exp017_spectral_bands_s2_full_middle_patch ---
+  - data_version: "v0.50.1"
+    config: "exp017_spectral_bands_s2_full_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "all_steps_of_middle_patch"
+    label: "Spectral Bands | S2 (12-band) | Temporal (4 steps)"
+
+  # --- exp018_spectral_bands_s2_full_four_patches ---
+  - data_version: "v0.50.1"
+    config: "exp018_spectral_bands_s2_full_four_patches"
+    strategy: "four_patches_from_april_to_june"
+    layer: "four_patches_from_april_to_june"
+    label: "Spectral Bands | S2 (12-band) | Spatial (1 step)"
+
+  # --- exp019_spectral_bands_s2_s1_middle_patch ---
+  - data_version: "v0.50.1"
+    config: "exp019_spectral_bands_s2_s1_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "all_steps_of_middle_patch"
+    label: "Spectral Bands | S2+S1 | Temporal (4 steps)"
+
+  # --- exp020_spectral_bands_s2_s1_four_patches ---
+  - data_version: "v0.50.1"
+    config: "exp020_spectral_bands_s2_s1_four_patches"
+    strategy: "four_patches_from_april_to_june"
+    layer: "four_patches_from_april_to_june"
+    label: "Spectral Bands | S2+S1 | Spatial (1 step)"
+
+  # --- exp021_spectral_bands_s2_s1_dem_middle_patch ---
+  - data_version: "v0.50.1"
+    config: "exp021_spectral_bands_s2_s1_dem_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "all_steps_of_middle_patch"
+    label: "Spectral Bands | S2+S1+DEM | Temporal (4 steps)"
+
+  # --- exp022_spectral_bands_s2_s1_dem_four_patches ---
+  - data_version: "v0.50.1"
+    config: "exp022_spectral_bands_s2_s1_dem_four_patches"
+    strategy: "four_patches_from_april_to_june"
+    layer: "four_patches_from_april_to_june"
+    label: "Spectral Bands | S2+S1+DEM | Spatial (1 step)"
+
+  # --- exp023_alphaearth_middle_patch ---
+  - data_version: "v0.50.1"
+    config: "exp023_alphaearth_middle_patch"
+    strategy: "middle_patch"
+    layer: "middle_patch"
+    label: "AlphaEarth | Annual (Center Patch)"
+
+  # --- exp032_prithvi300_dataset_stats ---
+  - data_version: "v0.50.1"
+    config: "exp032_prithvi300_dataset_stats"
+    strategy: "cls_token"
+    layer: "layer_23"
+    label: "Prithvi 300M (dataset stats) | S2 (6-band) | CLS Token"
+  - data_version: "v0.50.1"
+    config: "exp032_prithvi300_dataset_stats"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "Prithvi 300M (dataset stats) | S2 (6-band) | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp032_prithvi300_dataset_stats"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_23"
+    label: "Prithvi 300M (dataset stats) | S2 (6-band) | Spatial (1 step)"
+
+  # --- exp033_prithvi600_dataset_stats ---
+  - data_version: "v0.50.1"
+    config: "exp033_prithvi600_dataset_stats"
+    strategy: "cls_token"
+    layer: "layer_31"
+    label: "Prithvi 600M (dataset stats) | S2 (6-band) | CLS Token"
+  - data_version: "v0.50.1"
+    config: "exp033_prithvi600_dataset_stats"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_31"
+    label: "Prithvi 600M (dataset stats) | S2 (6-band) | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp033_prithvi600_dataset_stats"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_31"
+    label: "Prithvi 600M (dataset stats) | S2 (6-band) | Spatial (1 step)"
+
+  # --- exp034_dinov3_rgb_middle_patch ---
+  - data_version: "v0.50.1"
+    config: "exp034_dinov3_rgb_middle_patch"
+    strategy: "all_steps_of_cls_token"
+    layer: "layer_11"
+    label: "DINOv3 ViT-B/16 web (RGB) | CLS Token (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp034_dinov3_rgb_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_11"
+    label: "DINOv3 ViT-B/16 web (RGB) | Temporal (4 steps)"
+
+  # --- exp035_dinov3_sat_rgb_middle_patch ---
+  - data_version: "v0.50.1"
+    config: "exp035_dinov3_sat_rgb_middle_patch"
+    strategy: "all_steps_of_cls_token"
+    layer: "layer_23"
+    label: "DINOv3 ViT-L/16 SAT-493M (RGB) | CLS Token (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp035_dinov3_sat_rgb_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "DINOv3 ViT-L/16 SAT-493M (RGB) | Temporal (4 steps)"
+
+  # --- exp036_olmoearth_v1_2_base_s2_timestamps ---
+  - data_version: "v0.50.1"
+    config: "exp036_olmoearth_v1_2_base_s2_timestamps"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_0"
+    label: "OlmoEarth v1.2 Base | S2 | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp036_olmoearth_v1_2_base_s2_timestamps"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_0"
+    label: "OlmoEarth v1.2 Base | S2 | Spatial (1 step)"
+
+  # --- exp037_olmoearth_v1_2_base_s2_s1_timestamps ---
+  - data_version: "v0.50.1"
+    config: "exp037_olmoearth_v1_2_base_s2_s1_timestamps"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_0"
+    label: "OlmoEarth v1.2 Base | S2+S1 | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp037_olmoearth_v1_2_base_s2_s1_timestamps"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_0"
+    label: "OlmoEarth v1.2 Base | S2+S1 | Spatial (1 step)"
+
+  # --- exp038_prithvi300_tl ---
+  - data_version: "v0.50.1"
+    config: "exp038_prithvi300_tl"
+    strategy: "cls_token"
+    layer: "layer_23"
+    label: "Prithvi 300M TL | S2 (6-band) | Time + location | CLS Token"
+  - data_version: "v0.50.1"
+    config: "exp038_prithvi300_tl"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "Prithvi 300M TL | S2 (6-band) | Time + location | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp038_prithvi300_tl"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_23"
+    label: "Prithvi 300M TL | S2 (6-band) | Time + location | Spatial (1 step)"
+
+  # --- exp039_prithvi600_tl ---
+  - data_version: "v0.50.1"
+    config: "exp039_prithvi600_tl"
+    strategy: "cls_token"
+    layer: "layer_31"
+    label: "Prithvi 600M TL | S2 (6-band) | Time + location | CLS Token"
+  - data_version: "v0.50.1"
+    config: "exp039_prithvi600_tl"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_31"
+    label: "Prithvi 600M TL | S2 (6-band) | Time + location | Temporal (4 steps)"
+  - data_version: "v0.50.1"
+    config: "exp039_prithvi600_tl"
+    strategy: "four_patches_from_april_to_june"
+    layer: "layer_31"
+    label: "Prithvi 600M TL | S2 (6-band) | Time + location | Spatial (1 step)"
+
+comp_metrics:
+  - type: pca_ablation_comparison
+
+comp_plots:
+  - type: pca_ablation_table
+    metric: pca_ablation_comparison

@@ -91,39 +91,6 @@ generate-app-files:
 		--processed-data-dir $${PROCESSED_PATH:-/app/data/processed} \
 		--interim-data-dir $${INTERIM_PATH:-/app/data/interim} \
 		--data-version v0.50.1
-
-## Compare downstream random-forest accuracy: OlmoEarth v1.2 generic vs real dates (story 16)
-.PHONY: compare-model-results
-compare-model-results:
-	python src/compare_model_results.py \
-		--processed-data-dir $${PROCESSED_PATH:-/app/data/processed} \
-		--figures-dir $${FIGURES_PATH:-/app/reports/figures} \
-		--data-version v0.50.1 \
-		--name 16_olmoearth_timestamps \
-		--title "OlmoEarth v1.2 Base: random forest accuracy, generic vs real acquisition dates (center patch, 4 steps)" \
-		--experiment "exp030_olmoearth_v1_2_base_s2:all_steps_of_middle_patch:layer_0:OlmoEarth v1.2 Base | S2 | Generic date" \
-		--experiment "exp036_olmoearth_v1_2_base_s2_timestamps:all_steps_of_middle_patch:layer_0:OlmoEarth v1.2 Base | S2 | Real dates" \
-		--experiment "exp031_olmoearth_v1_2_base_s2_s1:all_steps_of_middle_patch:layer_0:OlmoEarth v1.2 Base | S2+S1 | Generic date" \
-		--experiment "exp037_olmoearth_v1_2_base_s2_s1_timestamps:all_steps_of_middle_patch:layer_0:OlmoEarth v1.2 Base | S2+S1 | Real dates" \
-		--pair "OlmoEarth v1.2 Base | S2 | Generic date:OlmoEarth v1.2 Base | S2 | Real dates" \
-		--pair "OlmoEarth v1.2 Base | S2+S1 | Generic date:OlmoEarth v1.2 Base | S2+S1 | Real dates"
-
-## Compare downstream random-forest accuracy: Prithvi 300M/600M without vs with time + location (story 18)
-.PHONY: compare-model-results-prithvi-tl
-compare-model-results-prithvi-tl:
-	python src/compare_model_results.py \
-		--processed-data-dir $${PROCESSED_PATH:-/app/data/processed} \
-		--figures-dir $${FIGURES_PATH:-/app/reports/figures} \
-		--data-version v0.50.1 \
-		--name 18_prithvi_tl \
-		--title "Prithvi EO V2: random forest accuracy, no coords vs time + location (center patch, 4 steps)" \
-		--experiment "exp001_prithvi300:all_steps_of_middle_patch:layer_23:Prithvi 300M | No coords" \
-		--experiment "exp038_prithvi300_tl:all_steps_of_middle_patch:layer_23:Prithvi 300M TL | Time + location" \
-		--experiment "exp004_prithvi600:all_steps_of_middle_patch:layer_31:Prithvi 600M | No coords" \
-		--experiment "exp039_prithvi600_tl:all_steps_of_middle_patch:layer_31:Prithvi 600M TL | Time + location" \
-		--pair "Prithvi 300M | No coords:Prithvi 300M TL | Time + location" \
-		--pair "Prithvi 600M | No coords:Prithvi 600M TL | Time + location"
-
 ## Upload all gelos-app files (json, pmtiles, config.js) to s3://gelos-fm/
 .PHONY: upload-app-files
 upload-app-files:

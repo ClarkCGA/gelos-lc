@@ -68,7 +68,7 @@ spectral_band_extraction:
 
 embedding_extraction_strategies:
   all_steps_of_middle_patch:
-    title: "Temporal (Center Patch, All 4 Time Steps) (Spectral Bands)"
+    title: "Center Patch × 4 Time Steps"
     slice_args:
     - start: 0
       stop: null

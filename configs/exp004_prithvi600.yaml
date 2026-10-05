@@ -93,7 +93,7 @@ embedding_extraction_strategies:
   all_steps_of_middle_patch:
  # as the first patch is the cls token, we index the middle as 25 rather than 24.
  # this is important for consistency with non-cls token models like terramind.
-    title: "Temporal (Center Patch, All 4 Time Steps)"
+    title: "Center Patch × 4 Time Steps"
     slice_args:
     - start: 25
       stop: null
@@ -132,7 +132,7 @@ embedding_extraction_strategies:
       - type: random_forest
         transform: raw
   four_patches_from_april_to_june:
-    title: "Spatial (4 Central Patches, Single Time Step — Apr–Jun)"
+    title: "4 Central Patches, Apr–Jun"
     slice_args:
     - start: 73
       stop: 77

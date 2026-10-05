@@ -1,0 +1,44 @@
+comparison_name: "Spatial kNN (GSD & Latitude Difference) — 4b: Terramind Large Sensors (S2, S2+S1, S2+S1+DEM) vs Spectral Bands (S2+S1+DEM)"
+
+class_labels:
+  "1": "Water"
+  "2": "Trees"
+  "5": "Crops"
+  "7": "Built Area"
+  "8": "Bare Ground"
+  "11": "Rangeland"
+
+experiments:
+  - data_version: "v0.50.1"
+    config: "exp012_terramind_v1_large_s2_only"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "TM Large | S2 (11-band) | Temporal (4 steps)"
+    color: "#ffb380"
+  - data_version: "v0.50.1"
+    config: "exp014_terramind_v1_large_s2_s1"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "TM Large | S2+S1 | Temporal (4 steps)"
+    color: "#e57e2e"
+  - data_version: "v0.50.1"
+    config: "exp010_terramind_v1_large"
+    strategy: "all_steps_of_middle_patch"
+    layer: "layer_23"
+    label: "TM Large | S2+S1+DEM | Temporal (4 steps)"
+    color: "#c75a00"
+  - data_version: "v0.50.1"
+    config: "exp021_spectral_bands_s2_s1_dem_middle_patch"
+    strategy: "all_steps_of_middle_patch"
+    layer: "all_steps_of_middle_patch"
+    label: "Spectral Bands | S2+S1+DEM | Temporal (4 steps)"
+    color: "#333333"
+
+comp_metrics:
+  - type: knn_geo_distance_comparison
+
+comp_plots:
+  - type: knn_gsd_plot
+    metric: knn_geo_distance_comparison
+  - type: knn_lat_diff_plot
+    metric: knn_geo_distance_comparison

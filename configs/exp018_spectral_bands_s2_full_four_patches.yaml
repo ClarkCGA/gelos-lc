@@ -61,7 +61,7 @@ spectral_band_extraction:
 
 embedding_extraction_strategies:
   four_patches_from_april_to_june:
-    title: "Spatial (4 Central Patches, Single Time Step — Apr–Jun) (Spectral Bands)"
+    title: "4 Central Patches, Apr–Jun"
     slice_args:
     - start: 0
       stop: null
