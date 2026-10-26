@@ -194,3 +194,6 @@ lightning_logs/
 .worktreeinclude
 */generation_logs/
 */ipynb_checkpoints/
+
+# Output of gelos's `make downstream-check` smoke runs
+reports/figures/*-smoke/
